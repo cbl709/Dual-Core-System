@@ -4,8 +4,24 @@ NET ebi_addr<2> LOC=P103; #A29
 NET ebi_addr<3> LOC=P102; #A28
 NET ebi_addr<4> LOC=P101; #A27
 NET ebi_addr<5> LOC=P100; #A26
-NET ebi_addr<6> LOC=P99; #A25
-NET ebi_addr<7> LOC=P96; #A24
+NET ebi_addr<6> LOC=P99;  #A25
+NET ebi_addr<7> LOC=P96;  #A23
+NET ebi_addr<8> LOC=P95;  #A22
+NET ebi_addr<9> LOC=P94;  #A21
+NET ebi_addr<10> LOC=P76; #A20
+NET ebi_addr<11> LOC=P75; #A19
+NET ebi_addr<12> LOC=P66; #A18
+NET ebi_addr<13> LOC=P65; #A17
+NET ebi_addr<14> LOC=P64; #A16
+NET ebi_addr<15> LOC=P63; #A15
+NET ebi_addr<16> LOC=P62; #A14
+NET ebi_addr<17> LOC=P86; #A13
+NET ebi_addr<18> LOC=P87; #A12
+NET ebi_addr<19> LOC=P83; #A11
+NET ebi_addr<20> LOC=P78; #A10
+NET ebi_addr<21> LOC=P84; #A09
+NET ebi_addr<22> LOC=P79; #A08
+
 
 NET ebi_data<0> LOC=P59;  #D31
 NET ebi_data<1> LOC=P60;  #D30
@@ -49,9 +65,9 @@ NET srx0_pad_i    LOC=P138;
 NET stx0_pad_o    LOC=P139;
 NET int0_o        LOC=P93; #IRQ4
 
-NET srx1_pad_i    LOC=P141;
-NET stx1_pad_o    LOC=P140;
-NET int1_o     LOC=P85; #IRQ3
+#NET srx1_pad_i    LOC=P141;
+#NET stx1_pad_o    LOC=P140;
+#NET int1_o     LOC=P85; #IRQ3
 
 NET clk       LOC=P18; #30MHZ
 

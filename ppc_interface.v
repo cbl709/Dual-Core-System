@@ -21,40 +21,57 @@
 module ppc_interface(
 	  clk,
 	  rst_n,
-     cs_n,
-     oe_n,
-     we_n,
-     rd_wr,
-	  ebi_addr,  // connect to A31~A27
+      cs_n,
+      oe_n,
+      we_n,
+      rd_wr,
+	  ebi_addr,  // connect to 
 	  addr,     // ingnore  A31,A30
-     re_o,
-     we_o
+      re_o,
+      we_o
     );
 	 
 //////IO///////////////////
-    input clk;
-	 input rst_n;
-    input cs_n;
-    input oe_n;
-    input [3:0] we_n;
-    input rd_wr;
-	 input [7:0] ebi_addr; // connect to A31~A27
-	 output [5:0] addr;     // ingnore  A31,A30
-    output re_o;
-    output we_o;
+    input           clk;
+    input           rst_n;
+    input           cs_n;
+    input           oe_n;
+    input [3:0]     we_n;
+    input           rd_wr;
+    input [23:0]    ebi_addr; // connect to A31~A8
+    output[21:0]    addr;    // 
+    output          re_o;
+    output          we_o;
 /////////////////////////////	  
 
-wire  [5:0] addr;	
+wire  [21:0] addr;	
+wire re;
+wire we;
 
- 
+assign we =  ~rd_wr & ~cs_n&(we_n!=4'b1111); //	
+assign re = rd_wr & ~cs_n&(we_n==4'b1111)  ; //
+
+reg re_d1;
+reg re_d2;
+reg we_d1;
+reg we_d2;
+
+always@ (posedge clk)
+begin
+  re_d1 <= re;
+  re_d2 <= re_d1;
+  we_d1 <= we;
+  we_d2 <= we_d1;
+end
+
 wire re_o;
 wire we_o;
-	 
 
-assign we_o =  ~rd_wr & ~cs_n&(we_n!=4'b1111); //&&(~we_n); //& wre ; //WE for registers	
-assign re_o = rd_wr & ~cs_n&(we_n==4'b1111)  ; //RE for registers
+////检测读写信号上升沿，进行跨时钟域的同步处理
+assign re_o = re_d1&~ re_d2;
+assign we_o = we_d1&~ we_d2;
 
-assign addr[5:0]=ebi_addr[7:2];
+assign addr[21:0]=ebi_addr[23:2];
 	  
 
 endmodule

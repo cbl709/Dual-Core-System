@@ -84,14 +84,6 @@
 // receiver fifo has width 11 because it has break, parity and framing error bits
 `define UART_FIFO_REC_WIDTH  11
 
-`define CR0  6'b000000  // configuration register
-`define SR0  6'b000001  // status register
-`define TDR0 6'b000010
-`define RDR0 6'b000011
-`define CR1  6'b000100  // configuration register
-`define SR1  6'b000101  // status register
-`define TDR1 6'b000110
-`define RDR1 6'b000111
 
 
 

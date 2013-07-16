@@ -17,13 +17,11 @@
 // Revision: 
 // Revision 0.01 - File Created
 // Additional Comments: 
-// change log:(1) 引出tf_overrun管脚
 //////////////////////////////////////////////////////////////////////////////////
-`include "c:/uart_defines.v"
+`include "uart_defines.v"
 
 module uart_transmitter (
 	clk, 
-	rst_n, 
 	lcr, 
 	tf_push, 
 	dat_i, 
@@ -37,7 +35,6 @@ module uart_transmitter (
 	);
 
 input 										clk;
-input 										rst_n;
 input [7:0] 							   lcr; //line control register
 input 										tf_push;
 input [7:0] 							   dat_i;
@@ -49,14 +46,21 @@ output [2:0] 								tstate;
 output [`UART_FIFO_COUNTER_W-1:0] 			tf_count; //5 bits
 output 										tf_overrun;
 
-reg [2:0] 									tstate; //状态
-reg [4:0] 									counter;//脉冲计数
-reg [2:0] 									bit_counter;// counts the bits to be sent
-reg [6:0] 									shift_out;	// output shift register
-reg 										stx_o_tmp;//stx_pad_o 串行信号
-reg 										parity_xor;  // parity of the word
-reg 										tf_pop;
-reg 										bit_out;     //从管脚输出的位
+parameter s_idle        = 3'd0;//
+parameter s_send_start  = 3'd1;//发送起始位
+parameter s_send_byte   = 3'd2;//发送字节状态
+parameter s_send_parity = 3'd3;//
+parameter s_send_stop   = 3'd4;//发送停止位
+parameter s_pop_byte    = 3'd5;//读FIFO状态
+
+reg [2:0] 									tstate      =s_idle; //状态
+reg [4:0] 									counter     =5'b0;//脉冲计数
+reg [2:0] 									bit_counter =3'b0;// counts the bits to be sent
+reg [6:0] 									shift_out   =7'b0;	// output shift register
+reg 										stx_o_tmp   =1'b1;//stx_pad_o 串行信号
+reg 										parity_xor  =1'b0;  // parity of the word
+reg 										tf_pop      =1'b0;
+reg 										bit_out     =1'b0;     //从管脚输出的位
 
 // TX FIFO instance
 //
@@ -71,7 +75,6 @@ assign 	tf_data_in = dat_i;
 
 uart_tfifo fifo_tx(	// error bit signal is not used in transmitter FIFO
 	.clk(		clk		), 
-	.rst_n(	rst_n	),
 	.data_in(	tf_data_in	),
 	.data_out(	tf_data_out	),
 	.push(		tf_push		),
@@ -84,27 +87,10 @@ uart_tfifo fifo_tx(	// error bit signal is not used in transmitter FIFO
 
 // TRANSMITTER FINAL STATE MACHINE
 
-parameter s_idle        = 3'd0;//
-parameter s_send_start  = 3'd1;//发送起始位
-parameter s_send_byte   = 3'd2;//发送字节状态
-parameter s_send_parity = 3'd3;//
-parameter s_send_stop   = 3'd4;//发送停止位
-parameter s_pop_byte    = 3'd5;//读FIFO状态
 
-always @(posedge clk or negedge rst_n)
+
+always @(posedge clk )
 begin
-  if (~rst_n)
-  begin
-	tstate      <= #1 s_idle;//状态寄存器
-	stx_o_tmp   <= #1 1'b1;//串行输出
-	counter     <= #1 5'b0;//脉冲计数器
-	shift_out   <= #1 7'b0;//移位寄存器
-	bit_out     <= #1 1'b0;//位寄存器与移位寄存器一起构成8位数??
-	parity_xor  <= #1 1'b0;//奇偶效验位
-	tf_pop      <= #1 1'b0;//读FIFO信号
-	bit_counter <= #1 3'b0;//位寄存器
-  end
-  else
   if (enable)//
    begin
 	case (tstate)//状态

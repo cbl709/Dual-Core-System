@@ -1,0 +1,105 @@
+##############AOE dual-core system board rev1.0 ucf##########################
+NET ebi_addr<0> LOC=C11; #A31
+NET ebi_addr<1> LOC=D11; #A30
+
+
+NET ebi_addr<2> LOC=L21; #A29
+NET ebi_addr<3> LOC=L22; #A28
+NET ebi_addr<4> LOC=K22; #A27
+NET ebi_addr<5> LOC=K21; #A26
+NET ebi_addr<6> LOC=J21;  #A25
+NET ebi_addr<7> LOC=J22;  #A24
+NET ebi_addr<8> LOC=H21;  #A23
+NET ebi_addr<9> LOC=H22;  #A22
+NET ebi_addr<10> LOC=G21; #A21
+NET ebi_addr<11> LOC=E21; #A20
+NET ebi_addr<12> LOC=E22; #A19
+NET ebi_addr<13> LOC=D21; #A18
+NET ebi_addr<14> LOC=D22; #A17
+NET ebi_addr<15> LOC=U20; #A16
+NET ebi_addr<16> LOC=G22; #A15
+NET ebi_addr<17> LOC=F21; #A14
+NET ebi_addr<18> LOC=F22; #A13
+NET ebi_addr<19> LOC=C21; #A12
+NET ebi_addr<20> LOC=C22; #A11
+NET ebi_addr<21> LOC=V20; #A10
+NET ebi_addr<22> LOC=W20; #A09
+NET ebi_addr<23> LOC=T20; #A08
+
+
+NET ebi_data<0> LOC=Y22;  #D31
+NET ebi_data<1> LOC=W21;  #D30
+NET ebi_data<2> LOC=W22;  #D29
+NET ebi_data<3> LOC=V21;  #D28
+NET ebi_data<4> LOC=V22;  #D27
+NET ebi_data<5> LOC=U21;  #D26
+NET ebi_data<6> LOC=U22;  #D25
+NET ebi_data<7> LOC=T21;  #D24
+NET ebi_data<8> LOC=T22;  #D23
+NET ebi_data<9> LOC=P21;  #D22
+NET ebi_data<10> LOC=R22;  #D21
+NET ebi_data<11> LOC=P22;  #D20
+NET ebi_data<12> LOC=N22;  #D19
+NET ebi_data<13> LOC=N21;  #D18
+NET ebi_data<14> LOC=R21;  #D17
+NET ebi_data<15> LOC=M21;  #D16
+NET ebi_data<16> LOC=N1;  #D15
+NET ebi_data<17> LOC=P1;  #D14
+NET ebi_data<18> LOC=R1;  #D13
+NET ebi_data<19> LOC=T1;  #D12
+NET ebi_data<20> LOC=U1;  #D11
+NET ebi_data<21> LOC=V1;  #D10
+NET ebi_data<22> LOC=W1;  #D 9
+NET ebi_data<23> LOC=Y1;  #D 8
+NET ebi_data<24> LOC=N2;  #D 7
+NET ebi_data<25> LOC=P2;  #D 6
+NET ebi_data<26> LOC=R2;  #D 5
+NET ebi_data<27> LOC=T2;  #D 4
+NET ebi_data<28> LOC=U2;  #D 3
+NET ebi_data<29> LOC=V2;  #D 2
+NET ebi_data<30> LOC=W2;  #D 1
+NET ebi_data<31> LOC=Y2;  #D 0
+
+NET we_n<0>  LOC=M20;
+NET we_n<1>  LOC=N20;
+NET we_n<2>  LOC=P20;
+NET we_n<3>  LOC=R20;
+
+NET cs_n     LOC=L20; #cs2
+NET oe_n     LOC=K20;  #OE
+NET rd_wr    LOC=B19;  #RD_WR
+
+NET clk       LOC=AB12; #CLKOUT
+#NET clk       LOC=A11;  #14.74MHZ
+#NET clk       LOC=B11;  #32MHZ
+
+
+
+##########  UART 422 PADS ##################
+NET srxA_pad_i    LOC=A14;
+NET stxA_pad_o    LOC=A13;
+#NET intA_o         #
+
+NET srxB_pad_i    LOC=A15;
+NET stxB_pad_o    LOC=A16;
+#NET intB_o        LOC=P93; #
+
+NET srxC_pad_i    LOC=B15;
+NET stxC_pad_o    LOC=B17;
+#NET intC_o        #
+
+NET srxD_pad_i    LOC=B16;
+NET stxD_pad_o    LOC=B14;
+#NET intD_o        #
+
+########   LED  ###########################
+#NET led1      LOC=D1;
+#NET led2      LOC=D2;
+#NET led3      LOC=E1;
+
+
+
+
+
+
+

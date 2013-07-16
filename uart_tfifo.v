@@ -1,9 +1,7 @@
 `timescale 1ns / 1ps
-`include "c:/uart_defines.v"
-/// chang log:
-
+`include "uart_defines.v"
 module uart_tfifo (clk, 
-	rst_n, data_in, data_out,
+	 data_in, data_out,
 // Control signals
 	push, // push strobe, active high
 	pop,   // pop strobe, active high
@@ -16,13 +14,12 @@ module uart_tfifo (clk,
 
 
 // FIFO parameters
-parameter fifo_width = `UART_FIFO_WIDTH;//8
-parameter fifo_depth = `UART_FIFO_DEPTH;//16
-parameter fifo_pointer_w = `UART_FIFO_POINTER_W;//4
-parameter fifo_counter_w = `UART_FIFO_COUNTER_W;//5
+parameter fifo_width = `UART_FIFO_WIDTH;//
+parameter fifo_depth = `UART_FIFO_DEPTH;//
+parameter fifo_pointer_w = `UART_FIFO_POINTER_W;//
+parameter fifo_counter_w = `UART_FIFO_COUNTER_W;//
 
 input				clk;
-input				rst_n;
 input				push;
 input				pop;
 input	[fifo_width-1:0]	data_in;
@@ -36,34 +33,28 @@ output	[fifo_counter_w-1:0]	count;
 wire	[fifo_width-1:0]	data_out;
 
 // FIFO pointers
-reg	[fifo_pointer_w-1:0]	top;
-reg	[fifo_pointer_w-1:0]	bottom;
+reg	[fifo_pointer_w-1:0]	top=0;
+reg	[fifo_pointer_w-1:0]	bottom=0;
 
-reg	[fifo_counter_w-1:0]	count;
-reg				overrun;
+reg	[fifo_counter_w-1:0]	count=0;
+reg				overrun=0;
 wire [fifo_pointer_w-1:0] top_plus_1 = top + 1'b1;
 wire push_logic;
 assign push_logic=push&(count<fifo_depth);
 
-raminfr #(fifo_pointer_w,fifo_width,fifo_depth) tfifo  //?
+tf_raminfr tfifo  //
         (   .clk(clk), 
 			.we(push_logic), 
-			.a(top), 
-			.dpra(bottom), 
-			.di(data_in), 
-			.dpo(data_out)
+			.top(top), 
+			.bottom(bottom), 
+			.data_in(data_in), 
+			.data_out(data_out)
 		); 
 
 
-always @(posedge clk or negedge rst_n) // synchronous FIFO
+always @(posedge clk ) // synchronous FIFO
 begin
-	if (~rst_n)
-	begin
-		top		<= #1 0;
-		bottom		<= #1 1'b0;
-		count		<= #1 0;
-	end
-	else
+	
 	if (fifo_reset) begin
 		top		<= #1 0;
 		bottom		<= #1 1'b0;
@@ -91,11 +82,9 @@ begin
 	end
 end   // always
 
-always @(posedge clk or negedge rst_n) // synchronous FIFO
+always @(posedge clk ) // synchronous FIFO
 begin
-  if (~rst_n)
-    overrun   <= #1 1'b0;
-  else
+  
   if(fifo_reset | reset_status) 
     overrun   <= #1 1'b0;
   else

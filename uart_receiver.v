@@ -2,13 +2,12 @@
 ////cbl_uart
 
 `timescale 1ns / 1ps
-`include "c:/uart_defines.v"
+`include "uart_defines.v"
 
-module uart_receiver (clk, rst_n, lcr, rf_pop, srx_pad_i, enable, 
+module uart_receiver (clk,  lcr, rf_pop, srx_pad_i, enable, 
 	counter_t, rf_count, rf_data_out, rf_error_bit, rf_overrun, read_empty,rx_reset, lsr_mask, rstate, rf_push_pulse);
 
 input				clk;
-input				rst_n;
 input	         [7:0]	lcr;
 input				rf_pop;
 input				srx_pad_i;
@@ -25,23 +24,37 @@ output				rf_error_bit;
 output [3:0] 		rstate;
 output 				rf_push_pulse;
 
-reg	[3:0]	rstate;
-reg	[3:0]	rcounter16;
-reg	[2:0]	rbit_counter;
-reg	[7:0]	rshift;			// receiver shift register
-reg		rparity;		    // received parity
-reg		rparity_error;
-reg		rframing_error;		// framing error flag
+parameter  sr_idle 					= 4'd0;
+parameter  sr_rec_start 			= 4'd1;
+parameter  sr_rec_bit 				= 4'd2;
+parameter  sr_rec_parity			= 4'd3;
+parameter  sr_rec_stop 				= 4'd4;
+parameter  sr_check_parity 		= 4'd5;
+parameter  sr_rec_prepare 			= 4'd6;
+parameter  sr_end_bit				= 4'd7;
+parameter  sr_ca_lc_parity			= 4'd8;
+parameter  sr_wait1 				   = 4'd9;
+parameter  sr_push 					= 4'd10;
 
-reg		rparity_xor;
-reg	[7:0]	counter_b;	    // counts the 0 (low) signals
-reg   rf_push_q; 
+
+
+reg	[3:0]	rstate      = sr_idle;
+reg	[3:0]	rcounter16  = 4'b0;
+reg	[2:0]	rbit_counter= 3'b0;
+reg	[7:0]	rshift		= 8'b0;// receiver shift register
+reg		rparity  		= 1'b0;    // received parity
+reg		rparity_error   = 1'b0;
+reg		rframing_error  = 1'b0;		// framing error flag
+
+reg		rparity_xor     =1'b0;
+reg	[7:0]	counter_b   =8'd159;	    // counts the 0 (low) signals
+reg   rf_push_q         =1'b0; 
 
 // RX FIFO signals
 reg	    [`UART_FIFO_REC_WIDTH-1:0]	    				rf_data_in;
 wire	[`UART_FIFO_REC_WIDTH-1:0]	    				rf_data_out;
 wire      												rf_push_pulse;
-reg														rf_push;
+reg														rf_push=1'b0;
 wire													rf_pop;
 wire													rf_overrun;
 wire	[`UART_FIFO_COUNTER_W-1:0]						rf_count;
@@ -51,7 +64,6 @@ wire 													break_error = (counter_b == 0);
 // RX FIFO instance
 uart_rfifo #(`UART_FIFO_REC_WIDTH) fifo_rx(
 	.clk(		clk		), 
-	.rst_n(	rst_n	),
 	.data_in(	rf_data_in	),
 	.data_out(	rf_data_out	),
 	.push(		rf_push_pulse		),
@@ -70,36 +82,11 @@ wire		rcounter16_eq_1 = (rcounter16 == 4'd1);
 
 wire [3:0] rcounter16_minus_1 = rcounter16 - 1'b1;
 
-parameter  sr_idle 					= 4'd0;
-parameter  sr_rec_start 			= 4'd1;
-parameter  sr_rec_bit 				= 4'd2;
-parameter  sr_rec_parity			= 4'd3;
-parameter  sr_rec_stop 				= 4'd4;
-parameter  sr_check_parity 			= 4'd5;
-parameter  sr_rec_prepare 			= 4'd6;
-parameter  sr_end_bit				= 4'd7;
-parameter  sr_ca_lc_parity			= 4'd8;
-parameter  sr_wait1 				= 4'd9;
-parameter  sr_push 					= 4'd10;
 
 
-always @(posedge clk or negedge rst_n)
+always @(posedge clk )
 begin
-  if (~rst_n)
-  begin
-     rstate 				<= #1 sr_idle;
 
-	  rcounter16 			<= #1 0;
-	  rbit_counter 			<= #1 0;
-	  rparity_xor 			<= #1 1'b0;
-	  rframing_error 		<= #1 1'b0;
-	  rparity_error 		<= #1 1'b0;
-	  rparity 				<= #1 1'b0;
-	  rshift 				<= #1 0;
-	  rf_push 				<= #1 1'b0;
-	  rf_data_in 			<= #1 0;
-  end
-  else
   if (enable)
   begin
 	case (rstate)
@@ -230,11 +217,8 @@ begin
   end  // if (enable)
 end // always of receiver
 
-always @ (posedge clk or negedge rst_n)
+always @ (posedge clk )
 begin
-  if(~rst_n)
-    rf_push_q <= 0;
-  else
     rf_push_q <= #1 rf_push;
 end
 
@@ -264,11 +248,8 @@ always @(lcr)
 wire [7:0] 	brc_value; // value to be set to break counter
 assign 		brc_value = toc_value[9:2]; // the same as timeout but 1 insead of 4 character times
 
-always @(posedge clk or negedge rst_n)
+always @(posedge clk )
 begin
-	if (~rst_n)
-		counter_b <= #1 8'd159;
-	else
 	if (srx_pad_i)
 		counter_b <= #1 brc_value; // character time length - 1
 	else
@@ -278,13 +259,11 @@ end // always of break condition detection
 
 ///
 /// Timeout condition detection
-reg	[9:0]	counter_t;	// counts the timeout condition clocks
+reg	[9:0]	counter_t=10'd639;	// counts the timeout condition clocks, 10 bits for the default 8N1
 
-always @(posedge clk or negedge rst_n)
+always @(posedge clk )
 begin
-	if (~rst_n)
-		counter_t <= #1 10'd639; // 10 bits for the default 8N1
-	else
+	
 		if(rf_push_pulse || rf_pop || rf_count == 0) // counter is reload when RX FIFO is empty, pop or push
 			counter_t <= #1 toc_value;
 		else

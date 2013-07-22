@@ -78,7 +78,7 @@ NET clk       LOC=AB12; #CLKOUT
 ##########  UART 422 PADS ##################
 NET srxA_pad_i    LOC=A14;
 NET stxA_pad_o    LOC=A13;
-#NET intA_o         #
+NET intA_o        LOC=AA17; #EMIOS 2
 
 NET srxB_pad_i    LOC=A15;
 NET stxB_pad_o    LOC=A16;
@@ -90,6 +90,14 @@ NET stxC_pad_o    LOC=B17;
 
 NET srxD_pad_i    LOC=B16;
 NET stxD_pad_o    LOC=B14;
+#NET intD_o        #
+
+NET srxE_pad_i    LOC=A17;
+NET stxE_pad_o    LOC=A18;
+#NET intE_o        #
+
+NET srxF_pad_i    LOC=B18;
+NET stxF_pad_o    LOC=A19;
 #NET intD_o        #
 
 ########   LED  ###########################

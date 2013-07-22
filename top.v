@@ -40,7 +40,15 @@ module top(
        
        stxD_pad_o, // uart out
        srxD_pad_i,
-       intD_o
+       intD_o,
+       
+       stxE_pad_o, // uart out
+       srxE_pad_i,
+       intE_o,
+       
+       stxF_pad_o, // uart out
+       srxF_pad_i,
+       intF_o
     );
      
      input       clk;
@@ -67,6 +75,14 @@ module top(
      output intD_o;
      output stxD_pad_o;
      
+     input  srxE_pad_i;
+     output intE_o;
+     output stxE_pad_o;
+     
+     input  srxF_pad_i;
+     output intF_o;
+     output stxF_pad_o;
+     
      wire [31:0] write_data;
      wire [31:0] read_data;
      wire re_o;
@@ -92,7 +108,17 @@ module top(
      wire [31:0] tdr3;
      wire [31:0] rdr3;
      
-     wire [5:0] addr;
+     wire [31:0] cr4;
+     wire [31:0] sr4;
+     wire [31:0] tdr4;
+     wire [31:0] rdr4;
+     
+     wire [31:0] cr5;
+     wire [31:0] sr5;
+     wire [31:0] tdr5;
+     wire [31:0] rdr5;
+     
+     wire [21:0] addr;
      
      wire tx0_write;
      wire rx0_read;
@@ -109,6 +135,14 @@ module top(
      wire tx3_write;
      wire rx3_read;
      wire sr3_read;
+     
+     wire tx4_write;
+     wire rx4_read;
+     wire sr4_read;
+     
+     wire tx5_write;
+     wire rx5_read;
+     wire sr5_read;
      
      
 assign write_data    = ebi_data;
@@ -152,6 +186,16 @@ regs uart_regs(
                 .tdr3(tdr3),
                 .rdr3(rdr3),
                 
+                .cr4(cr4),
+                .sr4(sr4),
+                .tdr4(tdr4),
+                .rdr4(rdr4),
+                
+                .cr5(cr5),
+                .sr5(sr5),
+                .tdr5(tdr5),
+                .rdr5(rdr5),
+                
                 .tx0_write(tx0_write),
                 .rx0_read(rx0_read),
                 .sr0_read(sr0_read),
@@ -166,7 +210,15 @@ regs uart_regs(
                 
                 .tx3_write(tx3_write),
                 .rx3_read(rx3_read),
-                .sr3_read(sr3_read)
+                .sr3_read(sr3_read),
+                
+                .tx4_write(tx4_write),
+                .rx4_read(rx4_read),
+                .sr4_read(sr4_read),
+                
+                .tx5_write(tx5_write),
+                .rx5_read(rx5_read),
+                .sr5_read(sr5_read)
                 );
                 
 uart uartA(
@@ -179,7 +231,7 @@ uart uartA(
             .rx_read(rx0_read),
             .sr_read(sr0_read),
             .srx_pad_i(srxA_pad_i), // uart in
-           .stx_pad_o(stxA_pad_o),// uart out
+            .stx_pad_o(stxA_pad_o),// uart out
             .int_pad_o(intA_o)
             );
 uart uartB(
@@ -222,6 +274,34 @@ uart uartD(
             .srx_pad_i(srxD_pad_i), // uart in
             .stx_pad_o(stxD_pad_o),// uart out
             .int_pad_o(intD_o)
+            );
+            
+uart uartE(
+            .clk(clk),
+            .cr(cr4),
+            .sr(sr4),
+            .tdr(tdr4),
+            .rdr(rdr4),
+            .tx_write(tx4_write),
+            .rx_read(rx4_read),
+            .sr_read(sr4_read),
+            .srx_pad_i(srxE_pad_i), // uart in
+            .stx_pad_o(stxE_pad_o),// uart out
+            .int_pad_o(intE_o)
+            );
+            
+uart uartF(
+            .clk(clk),
+            .cr(cr5),
+            .sr(sr5),
+            .tdr(tdr5),
+            .rdr(rdr5),
+            .tx_write(tx5_write),
+            .rx_read(rx5_read),
+            .sr_read(sr5_read),
+            .srx_pad_i(srxF_pad_i), // uart in
+            .stx_pad_o(stxF_pad_o),// uart out
+            .int_pad_o(intF_o)
             );
 
 

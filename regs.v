@@ -2,38 +2,51 @@
 
 `include "uart_defines.v"
 
-`define CR0  22'h00  // configuration register
-`define SR0  22'h01  // status register
-`define TDR0 22'h02
-`define RDR0 22'h03
+///注意地址是忽略A30,A31的
+`define CR0  22'h0000  // configuration register
+`define SR0  22'h0001  // status register
+`define TDR0 22'h0002
+`define RDR0 22'h0003
 
-`define CR1  22'h04  // configuration register
-`define SR1  22'h05  // status register
-`define TDR1 22'h06
-`define RDR1 22'h07
+`define CR1  22'h0004  // configuration register
+`define SR1  22'h0005  // status register
+`define TDR1 22'h0006
+`define RDR1 22'h0007
 
-`define CR2  22'h08  // configuration register
-`define SR2  22'h09  // status register
-`define TDR2 22'h0a
-`define RDR2 22'h0b
+`define CR2  22'h0008  // configuration register
+`define SR2  22'h0009  // status register
+`define TDR2 22'h000a
+`define RDR2 22'h000b
 
-`define CR3  22'h0c  // configuration register
-`define SR3  22'h0d  // status register
-`define TDR3 22'h0e
-`define RDR3 22'h0f
+`define CR3  22'h000c  // configuration register
+`define SR3  22'h000d  // status register
+`define TDR3 22'h000e
+`define RDR3 22'h000f
 
-`define CR4  22'h10  // configuration register
-`define SR4  22'h11  // status register
-`define TDR4 22'h12
-`define RDR4 22'h13
+`define CR4  22'h0010  // configuration register
+`define SR4  22'h0011  // status register
+`define TDR4 22'h0012
+`define RDR4 22'h0013
 
-`define CR5  22'h14  // configuration register
-`define SR5  22'h15  // status register
-`define TDR5 22'h16
-`define RDR5 22'h17
+`define CR5  22'h0014  // configuration register
+`define SR5  22'h0015  // status register
+`define TDR5 22'h0016
+`define RDR5 22'h0017
+//////////nand flash controller registers///////
+`define PAGE_BEGIN  22'h1000  //4KB的ram地址
+`define PAGE_END    22'h13ff  
+
+`define NFADDR0     22'h0300    
+`define NFADDR1     22'h0301    
+`define NFCR        22'h0302    
+`define ID          22'h0303    
+`define STATUS      22'h0304   
 
 
-module regs (   clk,
+
+
+module regs ( 
+                clk,
                 addr,
                 we,
                 re,
@@ -91,7 +104,22 @@ module regs (   clk,
                 
                 tx5_write,
                 rx5_read,
-                sr5_read
+                sr5_read,
+                
+                ///NAND Flash///
+                done,
+                id,
+					 status,        //flash status register
+                cpu_wr_ram_en, //cpu 写FPGA内部ram使能信号,高电平有效
+                cpu_wr_ram_addr,//cpu写FPGA内部ram地址
+                cpu_wr_ram_data,// 
+                cpu_rd_ram_data,
+                nfcr,           //nand flash controller register
+                nf_addr0,
+                nf_addr1
+                
+                
+                
              );
 input clk;
 input [21:0] addr;
@@ -129,6 +157,8 @@ input  [31:0] rdr5;
 output [31:0] cr5;
 output [31:0] tdr5;
 
+
+
 output              tx0_write;
 output              sr0_read;
 output              rx0_read;
@@ -153,6 +183,27 @@ output              tx5_write;
 output              sr5_read;
 output              rx5_read;
 
+///nand flash/////
+input               done;   //nand flash已经执行完一个指令
+input        [31:0] id;     //nand flash ID号
+input        [7:0]  status;
+input        [31:0] cpu_rd_ram_data;
+output       [7:0]  nfcr;
+output       [31:0] nf_addr0;
+output       [31:0] nf_addr1;
+output              cpu_wr_ram_en;
+output       [9:0]  cpu_wr_ram_addr;//4kB,1024*32bits 的内部ram大小
+output       [31:0] cpu_wr_ram_data;
+
+
+assign cpu_wr_ram_en   = we&&(addr>=`PAGE_BEGIN)&&(addr<=`PAGE_END);
+assign cpu_wr_ram_addr = addr[9:0]; //将CPU读写ram地址PAGE_BEGIN~PAGE_END映射到0~4KB
+assign cpu_wr_ram_data = write_data;
+wire   cpu_rd_ram_en;
+assign cpu_rd_ram_en   = re&&(addr>=`PAGE_BEGIN)&&(addr<=`PAGE_END);
+
+
+////////UART read/write signal/////////////////
 assign tx0_write = we&&( addr == `TDR0);
 assign sr0_read  = re&&( addr == `SR0);
 assign rx0_read  = re&&( addr == `RDR0);
@@ -177,8 +228,7 @@ assign tx5_write = we&&( addr == `TDR5);
 assign sr5_read  = re&&( addr == `SR5);
 assign rx5_read  = re&&( addr == `RDR5);
 
-
-/////////////////registers//////////////////////    
+/////////////////UART registers//////////////////////    
 reg [31:0]                              cr0= 32'h000c000;   // configuration register
 reg [31:0]                              cr1= 32'h000c000;
 reg [31:0]                              cr2= 32'h000c000;   // configuration register
@@ -193,25 +243,39 @@ reg [31:0]                              tdr3 =32'h00000000;
 reg [31:0]                              tdr4 =32'h00000000;
 reg [31:0]                              tdr5 =32'h00000000;
 
+///////////////NAND Flash controller registers//////////////
+reg [7:0]                              nfcr =8'h00;
+reg [31:0]                           nfaddr0 =32'h00000000;
+reg [31:0]                           nfaddr1 =32'h00000000;
+
+
 //////////////write registers////////////
 always@( posedge clk)
 begin
    if(we) begin
    case(addr)
-   `CR0 : cr0   <= write_data;
-   `CR1 : cr1   <= write_data;
-   `CR2 : cr2   <= write_data;
-   `CR3 : cr3   <= write_data;
-   `CR4 : cr4   <= write_data;
-   `CR5 : cr5   <= write_data;
-   `TDR0: tdr0  <= write_data;
-   `TDR1: tdr1  <= write_data;
-   `TDR2: tdr2  <= write_data;
-   `TDR3: tdr3  <= write_data;
-   `TDR4: tdr4  <= write_data;
-   `TDR5: tdr5  <= write_data;
-   endcase
-   end
+   /////UART/////////////////
+   `CR0 : cr0   <= write_data[31:0];
+   `CR1 : cr1   <= write_data[31:0];
+   `CR2 : cr2   <= write_data[31:0];
+   `CR3 : cr3   <= write_data[31:0];
+   `CR4 : cr4   <= write_data[31:0];
+   `CR5 : cr5   <= write_data[31:0];
+   `TDR0: tdr0  <= write_data[31:0];
+   `TDR1: tdr1  <= write_data[31:0];
+   `TDR2: tdr2  <= write_data[31:0];
+   `TDR3: tdr3  <= write_data[31:0];
+   `TDR4: tdr4  <= write_data[31:0];
+   `TDR5: tdr5  <= write_data[31:0];
+   
+   ///NAND Flash///////////
+   `NFCR:      nfcr    <=write_data[31:0];
+   `NFADDR0:   nfaddr0 <=write_data[31:0];
+   `NFADDR1:   nfaddr1 <=write_data[31:0];  
+    endcase
+    end
+    
+    ///各个串口的发送和接收fifo复位控制信号保持一个clk后自动清0
    ///rx_reset and tx_reset will be clear after they are set for a clock
   if(cr0[ `CR_RX_RESET ]) //rx_reset
     cr0[ `CR_RX_RESET ]<=0;
@@ -242,6 +306,10 @@ begin
     cr5[ `CR_RX_RESET ]<=0;
   if(cr5[ `CR_TX_RESET ]) //tx_reset
     cr5[ `CR_TX_RESET ]<=0;
+    
+   if(done) // a command has been finished 
+      nfcr[7] <= 0; // disable start signal 
+   
 end
 
 ///////////read registers/////////////////
@@ -250,6 +318,8 @@ always@(re or addr)
 begin
   if(re) begin
   case(addr)
+  
+  //////////UART////////////
   `CR0:  read_data <= cr0;
   `SR0:  read_data <= sr0;
   `TDR0: read_data <= tdr0;
@@ -279,7 +349,18 @@ begin
   `SR5:  read_data <= sr5;
   `TDR5: read_data <= tdr5;
   `RDR5: read_data <= rdr5;
+  
+  ////NAND Flash Controller///
+  `NFCR:     read_data <= nfcr;
+  `NFADDR0:  read_data <= nfaddr0;
+  `ID:       read_data <= id;
+  `STATUS:   read_data <= status;
   endcase
+  
+  if(cpu_rd_ram_en) //cpu读取FPGA内部ram数据
+     read_data <= cpu_rd_ram_data;
+  
+  
   end
 end
 

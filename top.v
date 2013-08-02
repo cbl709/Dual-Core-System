@@ -48,7 +48,16 @@ module top(
        
        stxF_pad_o, // uart out
        srxF_pad_i,
-       intF_o
+       intF_o,
+       
+       /////NAND Flash controller
+       dio,
+       nf_cle,
+       nf_ale,
+       nf_ce_n,
+       nf_re_n,
+       nf_we_n,
+         r
     );
      
      input       clk;
@@ -82,6 +91,17 @@ module top(
      input  srxF_pad_i;
      output intF_o;
      output stxF_pad_o;
+     
+     ////NAND Flash controller
+     output               nf_cle;
+     output               nf_ale;
+     output               nf_ce_n;
+     output               nf_re_n;
+     output               nf_we_n;
+     inout      [7:0]     dio;
+     input                r;
+
+     
      
      wire [31:0] write_data;
      wire [31:0] read_data;
@@ -144,9 +164,38 @@ module top(
      wire rx5_read;
      wire sr5_read;
      
+     /////////////NAND Flash controller////////////////
+     wire                cpu_wr_ram_en;
+     wire       [9:0]    cpu_wr_ram_addr;//4kB,1024*32bits 的内部ram大小
+     wire       [31:0]   cpu_wr_ram_data;
+     wire      [31:0]    cpu_rd_ram_data;
+
+     wire       [31:0]   flash_wr_ram_data;
+     wire                flash_wr_ram_en;
+     wire       [9:0]    flash_wr_ram_addr;
+     wire      [31:0]    flash_rd_ram_data;
      
+     wire      [31:0]    nf_addr0;
+     wire      [31:0]    nf_addr1;
+     wire      [7:0]     nfcr;
+     wire      [31:0]    id;
+	  wire      [7:0]     status;
+     
+     
+////cpu and fpga inout port     
 assign write_data    = ebi_data;
 assign ebi_data[31:0]= re_o?read_data: 32'hzzzzzzzz;
+
+///fpga and flash inout port
+wire   [7:0] write_flash;
+wire  [7:0] read_flash;
+wire        read_flash_en;
+wire        done;
+
+assign           read_flash= dio;
+assign           dio=read_flash_en? 8'hzz:write_flash;
+
+
     
 ppc_interface  interface (          .clk(clk),
                                     .cs_n(cs_n),
@@ -159,7 +208,7 @@ ppc_interface  interface (          .clk(clk),
                                     .we_o(we_o)
                     );
                                 
-regs uart_regs(
+regs regs(
                 .clk(clk),
                 .addr(addr),
                 .we(we_o),
@@ -218,8 +267,48 @@ regs uart_regs(
                 
                 .tx5_write(tx5_write),
                 .rx5_read(rx5_read),
-                .sr5_read(sr5_read)
+                .sr5_read(sr5_read),
+                ////////nand flash////
+                .done(done),
+                .id(id),
+					 .status(status),
+                .cpu_wr_ram_en(cpu_wr_ram_en), //cpu 写FPGA内部ram使能信号,高电平有效
+                .cpu_wr_ram_addr(cpu_wr_ram_addr),//cpu写FPGA内部ram地址
+                .cpu_wr_ram_data(cpu_wr_ram_data),// 
+                .cpu_rd_ram_data(cpu_rd_ram_data),
+                .nfcr(nfcr),            //nand flash controller register
+                .nf_addr0(nf_addr0),
+                .nf_addr1(nf_addr1)
                 );
+
+
+                
+nand_flash_top  nand_flash_top(
+                        .clk(clk),
+                        .cpu_wr_ram_en  (cpu_wr_ram_en),
+                        .cpu_wr_ram_addr(cpu_wr_ram_addr),//4kB,1024*32bits                      
+                        .cpu_wr_ram_data(cpu_wr_ram_data),
+                        .cpu_rd_ram_data(cpu_rd_ram_data),
+                        
+                        .nf_addr0(nf_addr0),
+                        .nf_addr1(nf_addr1),
+                        .nfcr(nfcr),
+                        .read_flash(read_flash),
+                        .write_flash(write_flash),
+                        .read_flash_en(read_flash_en),
+                        
+                        .nf_cle(nf_cle),
+                        .nf_ale(nf_ale),
+                        .nf_ce_n(nf_ce_n),
+                        .nf_re_n(nf_re_n),
+                        .nf_we_n(nf_we_n),
+                        .r(r),
+                        
+                        .id(id),
+								.status(status),
+                                
+                        .done(done)
+                      );
                 
 uart uartA(
             .clk(clk),

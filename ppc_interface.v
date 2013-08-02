@@ -19,21 +19,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ppc_interface(
-	  clk,
-	  rst_n,
+      clk,
       cs_n,
       oe_n,
       we_n,
       rd_wr,
-	  ebi_addr,  // connect to 
-	  addr,     // ingnore  A31,A30
+      ebi_addr,  // connect to 
+      addr,     // ingnore  A31,A30
       re_o,
       we_o
     );
-	 
+     
 //////IO///////////////////
     input           clk;
-    input           rst_n;
     input           cs_n;
     input           oe_n;
     input [3:0]     we_n;
@@ -42,13 +40,13 @@ module ppc_interface(
     output[21:0]    addr;    // 
     output          re_o;
     output          we_o;
-/////////////////////////////	  
+/////////////////////////////     
 
-wire  [21:0] addr;	
+wire  [21:0] addr;  
 wire re;
 wire we;
 
-assign we =  ~rd_wr & ~cs_n&(we_n!=4'b1111); //	
+assign we =  ~rd_wr & ~cs_n&(we_n!=4'b1111); // 
 assign re = rd_wr & ~cs_n&(we_n==4'b1111)  ; //
 
 reg re_d1;
@@ -72,6 +70,6 @@ assign re_o = re_d1&~ re_d2;
 assign we_o = we_d1&~ we_d2;
 
 assign addr[21:0]=ebi_addr[23:2];
-	  
+      
 
 endmodule

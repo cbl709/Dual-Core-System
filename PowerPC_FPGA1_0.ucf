@@ -105,6 +105,23 @@ NET stxF_pad_o    LOC=A19;
 #NET led2      LOC=D2;
 #NET led3      LOC=E1;
 
+########NAND Flash#########################
+NET dio<0>  LOC=AA3;
+NET dio<1>  LOC=AB5;
+NET dio<2>  LOC=AB6;
+NET dio<3>  LOC=AB7;
+NET dio<4>  LOC=AB8;
+NET dio<5>  LOC=AB9;
+NET dio<6>  LOC=AA10;
+NET dio<7>  LOC=AB10;
+
+NET nf_cle  LOC=AB16;
+NET nf_ale  LOC=AB17;
+NET nf_ce_n LOC=AB15;
+NET nf_re_n LOC=AB14;
+NET nf_we_n LOC=AB18;
+NET r       LOC=AB13;
+
 
 
 

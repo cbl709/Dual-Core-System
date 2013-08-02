@@ -79,6 +79,7 @@ NET clk       LOC=AB12; #CLKOUT
 NET srxA_pad_i    LOC=A14;
 NET stxA_pad_o    LOC=A13;
 NET intA_o        LOC=AA17; #EMIOS 2
+#NET intA_o        LOC=D1; #LED1
 
 NET srxB_pad_i    LOC=A15;
 NET stxB_pad_o    LOC=A16;

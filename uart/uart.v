@@ -8,6 +8,7 @@ module uart(
             sr_read,
             cr,
             sr,
+            ttr,      //time out and trigger_level register
             tdr,
             rdr,
             srx_pad_i, // uart in
@@ -19,6 +20,7 @@ module uart(
     input sr_read;
     input rx_read;
     input [31:0] cr;
+    input [31:0] ttr;
     output [31:0]sr;
     input [31:0] tdr;
     output [31:0] rdr;
@@ -37,6 +39,12 @@ reg                                     lsr0r=0, lsr1r=0, lsr2r=0, lsr3r=0, lsr4
 assign                                  lsr[9:0] = {lsr9r,lsr8r, lsr7r, lsr6r, lsr5r, lsr4r, lsr3r, lsr2r, lsr1r, lsr0r };
 reg  [7:0]                              iir= 8'hc1;
 assign sr={14'b00000000000000,lsr,iir};
+
+//////////////////ttr wire///////
+wire [7:0]                              time_out_val;
+assign                                  time_out_val = ttr[7:0];
+wire [`UART_FIFO_COUNTER_W-1:0]         trigger_level;
+assign                                  trigger_level= ttr[`UART_FIFO_COUNTER_W+7:8];
 
 
 /////// Frequency divider signals/////////////////////
@@ -147,7 +155,7 @@ wire srx_pad;
 
 wire rf_pop_pulse; // this signal is used to pop the data from receiver fifo
 wire serial_in;
-wire [9:0] counter_t;
+wire [31:0] counter_t;
 wire [`UART_FIFO_COUNTER_W-1:0]             rf_count;//5bits
 wire [`UART_FIFO_REC_WIDTH-1:0]             rf_data_out; // 11 bits
 wire rf_error_bit;
@@ -162,6 +170,7 @@ assign serial_in=srx_pad;
 
 uart_receiver receiver(.clk(clk), 
                        .lcr(cr[23:16]), 
+                       .time_out_val(time_out_val),
                        .rf_pop(rf_pop_pulse),
                        .srx_pad_i(serial_in), 
                        .enable(enable), 
@@ -198,26 +207,15 @@ begin
 end
 assign rf_pop_pulse=~pop_d1&pop_d2;// detect the falling edge of tf_push
 
-//////////////
-// Receiver FIFO trigger level selection logic (asynchronous mux)
-reg[3:0] trigger_level;
-always @(cr)
-    case (cr[`CR_FC_TL])               //fcr[7:6]
-        2'b00 : trigger_level = 1;
-        2'b01 : trigger_level = 4;
-        2'b10 : trigger_level = 8;
-        2'b11 : trigger_level = 14;
-    endcase // case(fcr[`UART_FC_TL])
+
     
-
-
 //----------------------------------------------------------------------------------------------
 //  STATUS REGISTERS  //
 //
 
 // Line Status  Register
 wire thre_set_en;
-wire frame_idle_en; //发送FIFO为空，并且保持空闲时间4.5个字节时间长度
+wire frame_idle_en; //发送FIFO为空，并且保持空闲时间time_out_val+0.5个字节时间长度
 // activation conditions
 assign lsr0 = (rf_count==0 && rf_push_pulse);  // data in receiver fifo available set condition
 assign lsr1 = rf_overrun;     // Receiver overrun error
@@ -329,14 +327,14 @@ reg [7:0] block_value; // one character length minus stop bit
 reg [7:0] block_cnt=8'd0;
 always @(cr)
   case (cr[19:16])
-    4'b0000                             : block_value =  95; // 6 bits
-    4'b0100                             : block_value = 103; // 6.5 bits
-    4'b0001, 4'b1000                    : block_value = 111; // 7 bits
-    4'b1100                             : block_value = 119; // 7.5 bits
-    4'b0010, 4'b0101, 4'b1001           : block_value = 127; // 8 bits
-    4'b0011, 4'b0110, 4'b1010, 4'b1101  : block_value = 143; // 9 bits
-    4'b0111, 4'b1011, 4'b1110           : block_value = 159; // 10 bits
-    4'b1111                             : block_value = 175; // 11 bits
+    4'b0000                             : block_value = 111; // 7 bits
+    4'b0100                             : block_value = 119; // 7.5 bits
+    4'b0001, 4'b1000                    : block_value = 127; // 8 bits
+    4'b1100                             : block_value = 135; // 8.5 bits
+    4'b0010, 4'b0101, 4'b1001           : block_value = 143; // 9 bits
+    4'b0011, 4'b0110, 4'b1010, 4'b1101  : block_value = 159; // 10 bits
+    4'b0111, 4'b1011, 4'b1110           : block_value = 175; // 11 bits
+    4'b1111                             : block_value = 191; // 12 bits
   endcase // case(lcr[3:0])
 
 // Counting time of one character minus stop bit
@@ -349,21 +347,27 @@ begin
     block_cnt <= #1 block_cnt - 1;  // decrement break counter
 end // always of break condition detection
 
-wire [10:0] idle_cnt;
-assign idle_cnt={block_cnt,2'b00}+block_cnt[7:2];
-reg [10:0] frame_idle_cnt =11'b0;
+
+//idle_cnt 计算fifo为空的时间长度
+reg [31:0] idle_cnt;
+always@(time_out_val or block_value)
+begin
+  idle_cnt <= time_out_val*(block_value+1)+ block_value/2; //设定值为time_out_val+0.5个字节时间长度
+end
+
+reg [31:0] frame_idle_cnt =32'b0;
 always@ (posedge clk)
 begin
-  if(lsr5) //发送fifo空闲
-     frame_idle_cnt <= idle_cnt; //空闲时间达到4.5个字节时间长度
-  else
-     if (enable & frame_idle_cnt != 11'b0 )  // only work on enable times
+  if(~lsr5r) //发送fifo有数据可发时重新计数
+     frame_idle_cnt <= idle_cnt; //
+  else      //发送fifo空闲，开始倒计时
+     if (enable & frame_idle_cnt != 32'b0 )  // only work on enable times
         frame_idle_cnt <= #1 frame_idle_cnt - 1;  // decrement break counter
 end
 
 // Generating THRE status enable signal
 assign thre_set_en = ~(|block_cnt);
-assign frame_idle_en=~(|frame_idle_cnt); 
+assign frame_idle_en=~(|frame_idle_cnt);  //倒计时为0，触发发送帧中断
 //------------------------------------------------------------------
 
 
@@ -380,7 +384,7 @@ assign rls_int  = cr[`UART_IE_RLS] && (lsr[`UART_LS_OE] || lsr[`UART_LS_PE] || l
 assign rda_int  = cr[`UART_IE_RDA] && (rf_count >= trigger_level);
 assign thre_int = cr[`UART_IE_THRE ] && lsr[`UART_LS_TFE];
 assign ften_int = cr[`UART_IE_FTEN]  && lsr[`UART_LS_FTE];
-assign ti_int   = cr[`UART_IE_TO ] && (counter_t == 10'b0) && (|rf_count);
+assign ti_int   = cr[`UART_IE_TO ] && ~(|counter_t ) && (|rf_count);
 
 reg      rls_int_d  =1'b0;
 reg      thre_int_d =1'b0;

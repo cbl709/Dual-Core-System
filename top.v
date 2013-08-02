@@ -109,31 +109,37 @@ module top(
      wire we_o;
      
      wire [31:0] cr0;
+     wire [31:0] ttr0;
      wire [31:0] sr0;
      wire [31:0] tdr0;
      wire [31:0] rdr0;
      
      wire [31:0] cr1;
+     wire [31:0] ttr1;
      wire [31:0] sr1;
      wire [31:0] tdr1;
      wire [31:0] rdr1;
      
      wire [31:0] cr2;
+     wire [31:0] ttr2;
      wire [31:0] sr2;
      wire [31:0] tdr2;
      wire [31:0] rdr2;
      
      wire [31:0] cr3;
+     wire [31:0] ttr3;
      wire [31:0] sr3;
      wire [31:0] tdr3;
      wire [31:0] rdr3;
      
      wire [31:0] cr4;
+     wire [31:0] ttr4;
      wire [31:0] sr4;
      wire [31:0] tdr4;
      wire [31:0] rdr4;
      
      wire [31:0] cr5;
+     wire [31:0] ttr5;
      wire [31:0] sr5;
      wire [31:0] tdr5;
      wire [31:0] rdr5;
@@ -179,7 +185,7 @@ module top(
      wire      [31:0]    nf_addr1;
      wire      [7:0]     nfcr;
      wire      [31:0]    id;
-	  wire      [7:0]     status;
+      wire      [7:0]     status;
      
      
 ////cpu and fpga inout port     
@@ -216,31 +222,37 @@ regs regs(
                 .write_data(write_data),
                 .read_data(read_data),
                 .cr0(cr0),
+                .ttr0(ttr0),
                 .sr0(sr0),
                 .tdr0(tdr0),
                 .rdr0(rdr0),
                 
                 .cr1(cr1),
+                .ttr1(ttr1),
                 .sr1(sr1),
                 .tdr1(tdr1),
                 .rdr1(rdr1),
                 
                 .cr2(cr2),
+                .ttr2(ttr2),
                 .sr2(sr2),
                 .tdr2(tdr2),
                 .rdr2(rdr2),
                 
                 .cr3(cr3),
+                .ttr3(ttr3),
                 .sr3(sr3),
                 .tdr3(tdr3),
                 .rdr3(rdr3),
                 
                 .cr4(cr4),
+                .ttr4(ttr4),
                 .sr4(sr4),
                 .tdr4(tdr4),
                 .rdr4(rdr4),
                 
                 .cr5(cr5),
+                .ttr5(ttr5),
                 .sr5(sr5),
                 .tdr5(tdr5),
                 .rdr5(rdr5),
@@ -271,7 +283,7 @@ regs regs(
                 ////////nand flash////
                 .done(done),
                 .id(id),
-					 .status(status),
+                     .status(status),
                 .cpu_wr_ram_en(cpu_wr_ram_en), //cpu 写FPGA内部ram使能信号,高电平有效
                 .cpu_wr_ram_addr(cpu_wr_ram_addr),//cpu写FPGA内部ram地址
                 .cpu_wr_ram_data(cpu_wr_ram_data),// 
@@ -305,7 +317,7 @@ nand_flash_top  nand_flash_top(
                         .r(r),
                         
                         .id(id),
-								.status(status),
+                                .status(status),
                                 
                         .done(done)
                       );
@@ -313,6 +325,7 @@ nand_flash_top  nand_flash_top(
 uart uartA(
             .clk(clk),
             .cr(cr0),
+            .ttr(ttr0),
             .sr(sr0),
             .tdr(tdr0),
             .rdr(rdr0),
@@ -326,6 +339,7 @@ uart uartA(
 uart uartB(
             .clk(clk),
             .cr(cr1),
+            .ttr(ttr1),
             .sr(sr1),
             .tdr(tdr1),
             .rdr(rdr1),
@@ -340,6 +354,7 @@ uart uartB(
 uart uartC(
             .clk(clk),
             .cr(cr2),
+            .ttr(ttr2),
             .sr(sr2),
             .tdr(tdr2),
             .rdr(rdr2),
@@ -354,6 +369,7 @@ uart uartC(
 uart uartD(
             .clk(clk),
             .cr(cr3),
+            .ttr(ttr3),
             .sr(sr3),
             .tdr(tdr3),
             .rdr(rdr3),
@@ -368,6 +384,7 @@ uart uartD(
 uart uartE(
             .clk(clk),
             .cr(cr4),
+            .ttr(ttr4),
             .sr(sr4),
             .tdr(tdr4),
             .rdr(rdr4),
@@ -382,6 +399,7 @@ uart uartE(
 uart uartF(
             .clk(clk),
             .cr(cr5),
+            .ttr(ttr5),
             .sr(sr5),
             .tdr(tdr5),
             .rdr(rdr5),

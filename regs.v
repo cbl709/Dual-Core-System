@@ -4,34 +4,40 @@
 
 ///注意地址是忽略A30,A31的
 `define CR0  22'h0000  // configuration register
-`define SR0  22'h0001  // status register
-`define TDR0 22'h0002
-`define RDR0 22'h0003
+`define TTR0 22'h0001
+`define SR0  22'h0002  // status register
+`define TDR0 22'h0003
+`define RDR0 22'h0004
 
-`define CR1  22'h0004  // configuration register
-`define SR1  22'h0005  // status register
-`define TDR1 22'h0006
-`define RDR1 22'h0007
+`define CR1  22'h0005  // configuration register
+`define TTR1 22'h0006
+`define SR1  22'h0007  // status register
+`define TDR1 22'h0008
+`define RDR1 22'h0009
 
-`define CR2  22'h0008  // configuration register
-`define SR2  22'h0009  // status register
-`define TDR2 22'h000a
-`define RDR2 22'h000b
+`define CR2  22'h000A  // configuration register
+`define TTR2 22'h000B
+`define SR2  22'h000C  // status register
+`define TDR2 22'h000D
+`define RDR2 22'h000E
 
-`define CR3  22'h000c  // configuration register
-`define SR3  22'h000d  // status register
-`define TDR3 22'h000e
-`define RDR3 22'h000f
+`define CR3  22'h000F  // configuration register
+`define TTR3 22'h0010
+`define SR3  22'h0011  // status register
+`define TDR3 22'h0012
+`define RDR3 22'h0013
 
-`define CR4  22'h0010  // configuration register
-`define SR4  22'h0011  // status register
-`define TDR4 22'h0012
-`define RDR4 22'h0013
+`define CR4  22'h0014  // configuration register
+`define TTR4 22'h0015
+`define SR4  22'h0016  // status register
+`define TDR4 22'h0017
+`define RDR4 22'h0018
 
-`define CR5  22'h0014  // configuration register
-`define SR5  22'h0015  // status register
-`define TDR5 22'h0016
-`define RDR5 22'h0017
+`define CR5  22'h0019  // configuration register
+`define TTR5 22'h001A
+`define SR5  22'h001B  // status register
+`define TDR5 22'h001C
+`define RDR5 22'h001D
 //////////nand flash controller registers///////
 `define PAGE_BEGIN  22'h1000  //4KB的ram地址
 `define PAGE_END    22'h13ff  
@@ -53,31 +59,37 @@ module regs (
                 write_data,
                 read_data,
                 cr0,
+                ttr0,
                 sr0,
                 tdr0,
                 rdr0,
                 
                 cr1,
+                ttr1,
                 sr1,
                 tdr1,
                 rdr1,
                 
                 cr2,
+                ttr2,
                 sr2,
                 tdr2,
                 rdr2,
                 
                 cr3,
+                ttr3,
                 sr3,
                 tdr3,
                 rdr3,
                 
                 cr4,
+                ttr4,
                 sr4,
                 tdr4,
                 rdr4,
                 
                 cr5,
+                ttr5,
                 sr5,
                 tdr5,
                 rdr5,
@@ -109,7 +121,7 @@ module regs (
                 ///NAND Flash///
                 done,
                 id,
-					 status,        //flash status register
+                status,        //flash status register
                 cpu_wr_ram_en, //cpu 写FPGA内部ram使能信号,高电平有效
                 cpu_wr_ram_addr,//cpu写FPGA内部ram地址
                 cpu_wr_ram_data,// 
@@ -130,29 +142,35 @@ output [31:0] read_data;
 input  [31:0] sr0;
 input  [31:0] rdr0;
 output [31:0] cr0;
+output [31:0] ttr0;
 output [31:0] tdr0;
 
 input  [31:0] sr1;
+output [31:0] ttr1;
 input  [31:0] rdr1;
 output [31:0] cr1;
 output [31:0] tdr1;
 
 input  [31:0] sr2;
+output [31:0] ttr2;
 input  [31:0] rdr2;
 output [31:0] cr2;
 output [31:0] tdr2;
 
 input  [31:0] sr3;
+output [31:0] ttr3;
 input  [31:0] rdr3;
 output [31:0] cr3;
 output [31:0] tdr3;
 
 input  [31:0] sr4;
+output [31:0] ttr4;
 input  [31:0] rdr4;
 output [31:0] cr4;
 output [31:0] tdr4;
 
 input  [31:0] sr5;
+output [31:0] ttr5;
 input  [31:0] rdr5;
 output [31:0] cr5;
 output [31:0] tdr5;
@@ -236,6 +254,13 @@ reg [31:0]                              cr3= 32'h000c000;
 reg [31:0]                              cr4= 32'h000c000;   // configuration register
 reg [31:0]                              cr5= 32'h000c000;
 
+reg [31:0]                             ttr0= 32'h0000004;   //默认4个字节时间timeout
+reg [31:0]                             ttr1= 32'h0000004;
+reg [31:0]                             ttr2= 32'h0000004;
+reg [31:0]                             ttr3= 32'h0000004;
+reg [31:0]                             ttr4= 32'h0000004;
+reg [31:0]                             ttr5= 32'h0000004;
+
 reg [31:0]                              tdr0 =32'h00000000;
 reg [31:0]                              tdr1 =32'h00000000;
 reg [31:0]                              tdr2 =32'h00000000;
@@ -261,6 +286,14 @@ begin
    `CR3 : cr3   <= write_data[31:0];
    `CR4 : cr4   <= write_data[31:0];
    `CR5 : cr5   <= write_data[31:0];
+   
+   `TTR0: ttr0  <= write_data[31:0];
+   `TTR1: ttr1  <= write_data[31:0];
+   `TTR2: ttr2  <= write_data[31:0];
+   `TTR3: ttr3  <= write_data[31:0];
+   `TTR4: ttr4  <= write_data[31:0];
+   `TTR5: ttr5  <= write_data[31:0];
+   
    `TDR0: tdr0  <= write_data[31:0];
    `TDR1: tdr1  <= write_data[31:0];
    `TDR2: tdr2  <= write_data[31:0];

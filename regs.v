@@ -38,6 +38,16 @@
 `define SR5  22'h001B  // status register
 `define TDR5 22'h001C
 `define RDR5 22'h001D
+
+/////////FPGA IO////////////////
+`define FPGA_O0   22'h0100
+`define FPGA_O1   22'h0101
+`define FPGA_O2   22'h0102
+
+`define FPGA_I0   22'h0103
+`define FPGA_I1   22'h0104
+`define FPGA_I2   22'h0105
+
 //////////nand flash controller registers///////
 `define PAGE_BEGIN  22'h1000  //4KB的ram地址
 `define PAGE_END    22'h13ff  
@@ -117,6 +127,16 @@ module regs (
                 tx5_write,
                 rx5_read,
                 sr5_read,
+                
+                ///FPGA IO/////
+                fpga_o0,
+                fpga_o1,
+                fpga_o2,
+             
+               
+                fpga_i0,
+                fpga_i1,
+                fpga_i2,
                 
                 ///NAND Flash///
                 done,
@@ -201,6 +221,15 @@ output              tx5_write;
 output              sr5_read;
 output              rx5_read;
 
+///FPGA IO//////////////////
+ output [31:0]             fpga_o0;
+ output [31:0]             fpga_o1;
+ output [31:0]             fpga_o2;
+ 
+ input  [31:0]             fpga_i0;
+ input  [31:0]             fpga_i1;
+ input  [31:0]             fpga_i2;
+
 ///nand flash/////
 input               done;   //nand flash已经执行完一个指令
 input        [31:0] id;     //nand flash ID号
@@ -268,6 +297,11 @@ reg [31:0]                              tdr3 =32'h00000000;
 reg [31:0]                              tdr4 =32'h00000000;
 reg [31:0]                              tdr5 =32'h00000000;
 
+//////FPGA IO///////////////
+reg [31:0]             fpga_o0=32'hffffffff;
+reg [31:0]             fpga_o1=32'hffffffff;
+reg [31:0]             fpga_o2=32'hffffffff;
+
 ///////////////NAND Flash controller registers//////////////
 reg [7:0]                              nfcr =8'h00;
 reg [31:0]                           nfaddr0 =32'h00000000;
@@ -300,6 +334,11 @@ begin
    `TDR3: tdr3  <= write_data[31:0];
    `TDR4: tdr4  <= write_data[31:0];
    `TDR5: tdr5  <= write_data[31:0];
+   
+   ////FPGA IO
+   `FPGA_O0: fpga_o0 <= write_data[31:0];
+   `FPGA_O1: fpga_o1 <= write_data[31:0];
+   `FPGA_O2: fpga_o2 <= write_data[31:0];
    
    ///NAND Flash///////////
    `NFCR:      nfcr    <=write_data[31:0];
@@ -382,6 +421,15 @@ begin
   `SR5:  read_data <= sr5;
   `TDR5: read_data <= tdr5;
   `RDR5: read_data <= rdr5;
+  
+  ///FPGA IO///////////////////
+  `FPGA_O0: read_data <= fpga_o0;
+  `FPGA_O1: read_data <= fpga_o1;
+  `FPGA_O2: read_data <= fpga_o2;
+  
+  `FPGA_I0: read_data <= fpga_i0;
+  `FPGA_I1: read_data <= fpga_i1;
+  `FPGA_I2: read_data <= fpga_i2;
   
   ////NAND Flash Controller///
   `NFCR:     read_data <= nfcr;

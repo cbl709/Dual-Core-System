@@ -50,6 +50,16 @@ module top(
        srxF_pad_i,
        intF_o,
        
+       ////FPGA IO
+       input_pad0,
+       input_pad1,
+       input_pad2,
+             
+               
+        output_pad0,
+        output_pad1,
+        output_pad2,
+       
        /////NAND Flash controller
        dio,
        nf_cle,
@@ -170,6 +180,24 @@ module top(
      wire rx5_read;
      wire sr5_read;
      
+     //////////////FPGA IO
+      // input signals from outside world
+    input [31:0]              input_pad0;
+    input [31:0]              input_pad1;
+    input [31:0]              input_pad2;
+  
+    output [31:0]            output_pad0;
+    output [31:0]            output_pad1;
+    output [31:0]            output_pad2;
+    
+    wire [31:0]             fpga_o0;
+    wire [31:0]             fpga_o1;
+    wire [31:0]             fpga_o2;
+  
+    wire  [31:0]           fpga_i0;
+    wire  [31:0]           fpga_i1;
+    wire  [31:0]           fpga_i2;
+     
      /////////////NAND Flash controller////////////////
      wire                cpu_wr_ram_en;
      wire       [9:0]    cpu_wr_ram_addr;//4kB,1024*32bits 的内部ram大小
@@ -185,7 +213,7 @@ module top(
      wire      [31:0]    nf_addr1;
      wire      [7:0]     nfcr;
      wire      [31:0]    id;
-      wire      [7:0]     status;
+     wire      [7:0]     status;
      
      
 ////cpu and fpga inout port     
@@ -280,10 +308,21 @@ regs regs(
                 .tx5_write(tx5_write),
                 .rx5_read(rx5_read),
                 .sr5_read(sr5_read),
+                
+                 ///FPGA IO/////
+                .fpga_o0(fpga_o0),
+                .fpga_o1(fpga_o1),
+                .fpga_o2(fpga_o2),
+             
+               
+                .fpga_i0(fpga_i0),
+                .fpga_i1(fpga_i1),
+                .fpga_i2(fpga_i2),
+                
                 ////////nand flash////
                 .done(done),
                 .id(id),
-                     .status(status),
+                .status(status),
                 .cpu_wr_ram_en(cpu_wr_ram_en), //cpu 写FPGA内部ram使能信号,高电平有效
                 .cpu_wr_ram_addr(cpu_wr_ram_addr),//cpu写FPGA内部ram地址
                 .cpu_wr_ram_data(cpu_wr_ram_data),// 
@@ -410,6 +449,28 @@ uart uartF(
             .stx_pad_o(stxF_pad_o),// uart out
             .int_pad_o(intF_o)
             );
+            
+fpga_io fpga_io(
+               .clk(clk),
+               .fpga_o0(fpga_o0),
+               .fpga_o1(fpga_o1),
+               .fpga_o2(fpga_o2),
+             
+               
+               .fpga_i0(fpga_i0),
+               .fpga_i1(fpga_i1),
+               .fpga_i2(fpga_i2),
+              
+               
+               .input_pad0(input_pad0),
+               .input_pad1(input_pad1),
+               .input_pad2(input_pad2),
+             
+               .output_pad0(output_pad0),
+               .output_pad1(output_pad1),
+               .output_pad2(output_pad2)
+            
+              );
 
 
      

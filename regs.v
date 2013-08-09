@@ -48,6 +48,10 @@
 `define FPGA_I1   22'h0104
 `define FPGA_I2   22'h0105
 
+////////FPGA CAN////////////////
+`define CAN0_BEGIN 22'h0200
+`define CAN0_END   22'h021f
+
 //////////nand flash controller registers///////
 `define PAGE_BEGIN  22'h1000  //4KB的ram地址
 `define PAGE_END    22'h13ff  
@@ -57,6 +61,8 @@
 `define NFCR        22'h0302    
 `define ID          22'h0303    
 `define STATUS      22'h0304   
+
+
 
 
 
@@ -132,6 +138,11 @@ module regs (
                 fpga_o0,
                 fpga_o1,
                 fpga_o2,
+                
+                //FPGA CAN////
+                can0_rd_en,
+                can0_wr_en,
+                cpu_read_can0_data,
              
                
                 fpga_i0,
@@ -229,7 +240,15 @@ output              rx5_read;
  input  [31:0]             fpga_i0;
  input  [31:0]             fpga_i1;
  input  [31:0]             fpga_i2;
-
+ 
+ 
+ ////FPGA CAN/////////////
+ output  can0_rd_en;
+ output  can0_wr_en;
+ input  [7:0] cpu_read_can0_data;
+ assign can0_rd_en= re&&(addr>=`CAN0_BEGIN)&&(addr<=`CAN0_END);
+ assign can0_wr_en= we&&(addr>=`CAN0_BEGIN)&&(addr<=`CAN0_END);
+ 
 ///nand flash/////
 input               done;   //nand flash已经执行完一个指令
 input        [31:0] id;     //nand flash ID号
@@ -283,12 +302,12 @@ reg [31:0]                              cr3= 32'h000c000;
 reg [31:0]                              cr4= 32'h000c000;   // configuration register
 reg [31:0]                              cr5= 32'h000c000;
 
-reg [31:0]                             ttr0= 32'h0000004;   //默认4个字节时间timeout
-reg [31:0]                             ttr1= 32'h0000004;
-reg [31:0]                             ttr2= 32'h0000004;
-reg [31:0]                             ttr3= 32'h0000004;
-reg [31:0]                             ttr4= 32'h0000004;
-reg [31:0]                             ttr5= 32'h0000004;
+reg [31:0]                             ttr0= 32'h0000104;   //默认4个字节时间timeout，trigger level默认为1
+reg [31:0]                             ttr1= 32'h0000104;
+reg [31:0]                             ttr2= 32'h0000104;
+reg [31:0]                             ttr3= 32'h0000104;
+reg [31:0]                             ttr4= 32'h0000104;
+reg [31:0]                             ttr5= 32'h0000104;
 
 reg [31:0]                              tdr0 =32'h00000000;
 reg [31:0]                              tdr1 =32'h00000000;
@@ -298,9 +317,10 @@ reg [31:0]                              tdr4 =32'h00000000;
 reg [31:0]                              tdr5 =32'h00000000;
 
 //////FPGA IO///////////////
-reg [31:0]             fpga_o0=32'hffffffff;
+reg [31:0]             fpga_o0=32'hffffffff; //IO 口默认输出高电平
 reg [31:0]             fpga_o1=32'hffffffff;
 reg [31:0]             fpga_o2=32'hffffffff;
+
 
 ///////////////NAND Flash controller registers//////////////
 reg [7:0]                              nfcr =8'h00;
@@ -347,8 +367,8 @@ begin
     endcase
     end
     
-    ///各个串口的发送和接收fifo复位控制信号保持一个clk后自动清0
-   ///rx_reset and tx_reset will be clear after they are set for a clock
+///各个串口的发送和接收fifo复位控制信号保持一个clk后自动清零
+///rx_reset and tx_reset will be clear after they are set for a clock
   if(cr0[ `CR_RX_RESET ]) //rx_reset
     cr0[ `CR_RX_RESET ]<=0;
   if(cr0[ `CR_TX_RESET ]) //tx_reset
@@ -441,8 +461,13 @@ begin
   if(cpu_rd_ram_en) //cpu读取FPGA内部ram数据
      read_data <= cpu_rd_ram_data;
   
+  if(can0_rd_en)
+    read_data  <= {24'b0,cpu_read_can0_data};
   
   end
+  
+  
+ 
 end
 
 

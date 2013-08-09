@@ -1,19 +1,25 @@
 
+`timescale 1ns / 1ps
 // synopsys translate_off
-`include "timescale.v"
+//`include "timescale.v"
 // synopsys translate_on
+
+// 将can top 的双向端口分成data_in data_out,并且去除ale地址锁存信号，地址信号
+//直接由外部输入  --by cbl 2013-8-9
 `include "can_defines.v"
 
 module can_top
 ( 
-    clk_i,
+  
     rst_i,
     addr,
-    data_in,
-    data_out,
     rd_i,
     wr_i,
+    data_in,
+    data_out,
+    
     cs_can_i,
+    clk_i,
     rx_i,
     tx_o,
     bus_off_on,
@@ -23,17 +29,18 @@ module can_top
 );
 
 parameter Tp = 1;
-input        rst_i;
-input        rd_i;
-input        wr_i;
-input        cs_can_i;
-input        addr;
-input        data_in;
-output       data_out;
 
-reg          wr_i_q;
-reg          rd_i_q;
-
+  input        rst_i;
+  input        rd_i;
+  input        wr_i;
+  input        [7:0] addr;
+  input  [7:0] data_in;
+  output [7:0] data_out;
+  input        cs_can_i;
+    
+  reg    [7:0] addr_latched;
+  reg          wr_i_q;
+  reg          rd_i_q;
 input        clk_i;
 input        rx_i;
 output       tx_o;
@@ -470,6 +477,14 @@ can_bsp i_can_bsp
   .go_tx(go_tx),
   .send_ack(send_ack)
 
+
+`ifdef CAN_BIST
+  ,
+  /* BIST signals */
+  .mbist_si_i(mbist_si_i),
+  .mbist_so_o(mbist_so_o),
+  .mbist_ctrl_i(mbist_ctrl_i)
+`endif
 );
 
 
@@ -486,13 +501,13 @@ end
 
 always @ (posedge clk_i)
 begin
-  //if (cs & (~we))
-  //  begin
-  //    if (data_out_fifo_selected)
-   //     data_out <=#Tp data_out_fifo;
-   //   else
+  if (cs & (~we))
+    begin
+      if (data_out_fifo_selected)
+        data_out <=#Tp data_out_fifo;
+      else
         data_out <=#Tp data_out_regs;
- //   end
+    end
 end
 
 
@@ -532,6 +547,7 @@ end
   assign cs = ((wr_i & (~wr_i_q)) | (rd_i & (~rd_i_q))) & cs_can_i;
   assign rst       = rst_i;
   assign we        = wr_i;
+ 
 
 
 endmodule

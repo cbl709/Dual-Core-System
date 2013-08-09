@@ -54,6 +54,7 @@ reg re_d2;
 reg we_d1;
 reg we_d2;
 
+////通过2个D触发器进行同步操作
 always@ (posedge clk)
 begin
   re_d1 <= re;
@@ -65,9 +66,8 @@ end
 wire re_o;
 wire we_o;
 
-////检测读写信号上升沿，进行跨时钟域的同步处理
-assign re_o = re_d1&~ re_d2;
-assign we_o = we_d1&~ we_d2;
+assign re_o = re_d2;
+assign we_o = we_d2;
 
 assign addr[21:0]=ebi_addr[23:2];
       

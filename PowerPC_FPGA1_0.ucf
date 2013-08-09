@@ -83,23 +83,23 @@ NET intA_o        LOC=AA17; #EMIOS 2
 
 NET srxB_pad_i    LOC=A15;
 NET stxB_pad_o    LOC=A16;
-#NET intB_o        LOC=P93; #
+#NET intB_o        LOC=W17; #EMIOS 3
 
 NET srxC_pad_i    LOC=B15;
 NET stxC_pad_o    LOC=B17;
-#NET intC_o        #
+#NET intC_o        #LOC=Y16; #EMIOS6
 
 NET srxD_pad_i    LOC=B16;
 NET stxD_pad_o    LOC=B14;
-#NET intD_o        #
+#NET intD_o        #LOC=AA16; #EMIOS8
 
 NET srxE_pad_i    LOC=A17;
 NET stxE_pad_o    LOC=A18;
-#NET intE_o        #
+#NET intE_o        #LOC=Y15;#EMIOS10
 
 NET srxF_pad_i    LOC=B18;
 NET stxF_pad_o    LOC=A19;
-#NET intD_o        #
+#NET intD_o        #LOC=AA15;#EMIOS12
 
 ########   LED  ###########################
 #NET led1      LOC=D1;
@@ -129,8 +129,9 @@ NET output_pad0<1> LOC= D2;#LED2
 NET output_pad0<2> LOC= E1;#LED3
 
 ####FPGA CAN##############
-#NET can0_rx   LOC = W8;
-#NET can0_tx   LOC = Y8;
+NET can0_rx   LOC = W8;
+NET can0_tx   LOC = Y8;
+NET can0_irq  LOC = AA15;#EMIOS 12
 
 
 

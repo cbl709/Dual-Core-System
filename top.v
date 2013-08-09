@@ -26,6 +26,8 @@ module top(
        rd_wr,
        ebi_data,  // connect to D31~D0
        ebi_addr,  // connect to A31~A8 
+       
+////////UART modules//////////////////////////////////////////////////////////////
        stxA_pad_o, // uart out
        srxA_pad_i,
        intA_o,
@@ -50,7 +52,7 @@ module top(
        srxF_pad_i,
        intF_o,
        
-       ////FPGA IO
+///////FPGA IO//////////////////////////////////////////////////////////
        input_pad0,
        input_pad1,
        input_pad2,
@@ -59,8 +61,13 @@ module top(
         output_pad0,
         output_pad1,
         output_pad2,
+          
+///////FPGA CAN/////////////////////////////////////////////////////////
+        can0_rx,
+        can0_tx,
+        can0_irq,
        
-       /////NAND Flash controller
+/////////NAND Flash controller//////////////////////////////////////////
        dio,
        nf_cle,
        nf_ale,
@@ -77,7 +84,8 @@ module top(
      input       rd_wr;
      inout [31:0] ebi_data; // connect to D31~D0
      input [23:0]  ebi_addr; // connect to A31~A8
-     
+
+//////UART modules input output //////////////////////////////////////////////////////     
      input  srxA_pad_i;
      output intA_o;
      output stxA_pad_o;
@@ -102,7 +110,7 @@ module top(
      output intF_o;
      output stxF_pad_o;
      
-     ////NAND Flash controller
+//////NAND Flash controller/////////////////////////////////////////////
      output               nf_cle;
      output               nf_ale;
      output               nf_ce_n;
@@ -110,9 +118,16 @@ module top(
      output               nf_we_n;
      inout      [7:0]     dio;
      input                r;
+     
+////FPGA CAN////////////////////////////////////////////////////////////
+     input can0_rx;
+     output can0_tx;
+     output can0_irq;
 
      
-     
+
+
+/////////////UART wires/////////////////////////////////////////////////     
      wire [31:0] write_data;
      wire [31:0] read_data;
      wire re_o;
@@ -180,8 +195,8 @@ module top(
      wire rx5_read;
      wire sr5_read;
      
-     //////////////FPGA IO
-      // input signals from outside world
+//////////////FPGA IO wires/////////////////////////////////////////////
+// input signals from outside world
     input [31:0]              input_pad0;
     input [31:0]              input_pad1;
     input [31:0]              input_pad2;
@@ -197,8 +212,15 @@ module top(
     wire  [31:0]           fpga_i0;
     wire  [31:0]           fpga_i1;
     wire  [31:0]           fpga_i2;
+    
+/////////////FPGA CAN wires///////////////////////////////////////////////
+    
+    wire can0_rd_en;
+    wire can0_wr_en;
+    wire [7:0] cpu_read_can0_data;
      
-     /////////////NAND Flash controller////////////////
+/////////////NAND Flash controller wires////////////////////////////////
+
      wire                cpu_wr_ram_en;
      wire       [9:0]    cpu_wr_ram_addr;//4kB,1024*32bits 的内部ram大小
      wire       [31:0]   cpu_wr_ram_data;
@@ -241,7 +263,9 @@ ppc_interface  interface (          .clk(clk),
                                     .re_o(re_o),
                                     .we_o(we_o)
                     );
-                                
+
+
+
 regs regs(
                 .clk(clk),
                 .addr(addr),
@@ -249,6 +273,8 @@ regs regs(
                 .re(re_o),
                 .write_data(write_data),
                 .read_data(read_data),
+                
+                ////UART////////////
                 .cr0(cr0),
                 .ttr0(ttr0),
                 .sr0(sr0),
@@ -319,6 +345,12 @@ regs regs(
                 .fpga_i1(fpga_i1),
                 .fpga_i2(fpga_i2),
                 
+                ///FPGA CAN//////
+                .can0_wr_en(can0_wr_en),
+                .can0_rd_en(can0_rd_en),
+                .cpu_read_can0_data(cpu_read_can0_data),
+            
+                
                 ////////nand flash////
                 .done(done),
                 .id(id),
@@ -356,7 +388,7 @@ nand_flash_top  nand_flash_top(
                         .r(r),
                         
                         .id(id),
-                                .status(status),
+                        .status(status),
                                 
                         .done(done)
                       );
@@ -471,6 +503,21 @@ fpga_io fpga_io(
                .output_pad2(output_pad2)
             
               );
+                  
+                  
+ppc_can_top can0(
+                   .clk(clk),
+                   .addr(addr[7:0]),
+                   .can_wr_en(can0_wr_en),
+                   .can_rd_en(can0_rd_en),
+                   .cpu_write_can_data(write_data[7:0]),
+                   .cpu_read_can_data(cpu_read_can0_data),
+                          
+                   .can_rx(can0_rx),
+                   .can_tx(can0_tx),
+                   .can_irq(can0_irq)
+                   
+                  );
 
 
      

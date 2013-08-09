@@ -1,8 +1,9 @@
 
 
 // synopsys translate_off
-`timescale 1ns / 1ps
+//`include "timescale.v"
 // synopsys translate_on
+`timescale 1ns / 1ps
 
 
 module can_register_syn

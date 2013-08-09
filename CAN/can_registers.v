@@ -1,8 +1,10 @@
 
 
+// synopsys translate_off
+//`include "timescale.v"
 `timescale 1ns / 1ps
 // synopsys translate_on
-`include "c:/can_defines.v"
+`include "can_defines.v"
 
 module can_registers
 ( 
@@ -137,8 +139,6 @@ input   [7:0] data_in;
 
 output  [7:0] data_out;
 reg     [7:0] data_out;
-
-
 
 output        irq_n;
 
@@ -917,57 +917,63 @@ can_register #(8) ACCEPTANCE_MASK_REG3
 
 
 // Reading data from registers
-always @ *
+always @ ( addr or extended_mode or mode or bus_timing_0 or bus_timing_1 or clock_divider or
+           acceptance_code_0 or acceptance_code_1 or acceptance_code_2 or acceptance_code_3 or
+           acceptance_mask_0 or acceptance_mask_1 or acceptance_mask_2 or acceptance_mask_3 or
+           reset_mode or tx_data_0 or tx_data_1 or tx_data_2 or tx_data_3 or tx_data_4 or 
+           tx_data_5 or tx_data_6 or tx_data_7 or tx_data_8 or tx_data_9 or status or 
+           error_warning_limit or rx_err_cnt or tx_err_cnt or irq_en_ext or irq_reg or mode_ext or
+           arbitration_lost_capture or rx_message_counter or mode_basic or error_capture_code
+         )
 begin
-  case({/*extended_mode*/1'h0, addr[4:0]})  /* synthesis parallel_case */ 
-    {1'h1, 5'd00} :  data_out <= {4'b0000, mode_ext[3:1], mode[0]};      // extended mode
-    {1'h1, 5'd01} :  data_out <= 8'hff;                                  // extended mode
-    {1'h1, 5'd02} :  data_out <= status;                                 // extended mode
-    {1'h1, 5'd03} :  data_out <= irq_reg;                                // extended mode
-    {1'h1, 5'd04} :  data_out <= irq_en_ext;                             // extended mode
-    {1'h1, 5'd06} :  data_out <= bus_timing_0;                           // extended mode
-    {1'h1, 5'd07} :  data_out <= bus_timing_1;                           // extended mode
-    {1'h1, 5'd11} :  data_out <= {3'h0, arbitration_lost_capture[4:0]};  // extended mode
-    {1'h1, 5'd12} :  data_out <= error_capture_code;                     // extended mode
-    {1'h1, 5'd13} :  data_out <= error_warning_limit;                    // extended mode
-    {1'h1, 5'd14} :  data_out <= rx_err_cnt;                             // extended mode
-    {1'h1, 5'd15} :  data_out <= tx_err_cnt;                             // extended mode
-    {1'h1, 5'd16} :  data_out <= acceptance_code_0;                      // extended mode
-    {1'h1, 5'd17} :  data_out <= acceptance_code_1;                      // extended mode
-    {1'h1, 5'd18} :  data_out <= acceptance_code_2;                      // extended mode
-    {1'h1, 5'd19} :  data_out <= acceptance_code_3;                      // extended mode
-    {1'h1, 5'd20} :  data_out <= acceptance_mask_0;                      // extended mode
-    {1'h1, 5'd21} :  data_out <= acceptance_mask_1;                      // extended mode
-    {1'h1, 5'd22} :  data_out <= acceptance_mask_2;                      // extended mode
-    {1'h1, 5'd23} :  data_out <= acceptance_mask_3;                      // extended mode
-    {1'h1, 5'd24} :  data_out <= 8'h0;                                   // extended mode
-    {1'h1, 5'd25} :  data_out <= 8'h0;                                   // extended mode
-    {1'h1, 5'd26} :  data_out <= 8'h0;                                   // extended mode
-    {1'h1, 5'd27} :  data_out <= 8'h0;                                   // extended mode
-    {1'h1, 5'd28} :  data_out <= 8'h0;                                   // extended mode
-    {1'h1, 5'd29} :  data_out <= {1'b0, rx_message_counter};             // extended mode
-    {1'h1, 5'd31} :  data_out <= clock_divider;                          // extended mode
-    
-    {1'h0, 5'd00} :  data_out <= {3'b001, mode_basic[4:1], mode[0]};     // basic mode
-    {1'h0, 5'd01} :  data_out <= 8'hff;                                  // basic mode
-    {1'h0, 5'd02} :  data_out <= status;                                 // basic mode
-    {1'h0, 5'd03} :  data_out <= {4'he, irq_reg[3:0]};                   // basic mode
-    {1'h0, 5'd04} :  data_out <= reset_mode? acceptance_code_0 : 8'hff;  // basic mode
-    {1'h0, 5'd05} :  data_out <= reset_mode? acceptance_mask_0 : 8'hff;  // basic mode
-    {1'h0, 5'd06} :  data_out <= reset_mode? bus_timing_0 : 8'hff;       // basic mode
-    {1'h0, 5'd07} :  data_out <= reset_mode? bus_timing_1 : 8'hff;       // basic mode
-    {1'h0, 5'd10} :  data_out <= reset_mode? 8'hff : tx_data_0;          // basic mode
-    {1'h0, 5'd11} :  data_out <= reset_mode? 8'hff : tx_data_1;          // basic mode
-    {1'h0, 5'd12} :  data_out <= reset_mode? 8'hff : tx_data_2;          // basic mode
-    {1'h0, 5'd13} :  data_out <= reset_mode? 8'hff : tx_data_3;          // basic mode
-    {1'h0, 5'd14} :  data_out <= reset_mode? 8'hff : tx_data_4;          // basic mode
-    {1'h0, 5'd15} :  data_out <= reset_mode? 8'hff : tx_data_5;          // basic mode
-    {1'h0, 5'd16} :  data_out <= reset_mode? 8'hff : tx_data_6;          // basic mode
-    {1'h0, 5'd17} :  data_out <= reset_mode? 8'hff : tx_data_7;          // basic mode
-    {1'h0, 5'd18} :  data_out <= reset_mode? 8'hff : tx_data_8;          // basic mode
-    {1'h0, 5'd19} :  data_out <= reset_mode? 8'hff : tx_data_9;          // basic mode
-    {1'h0, 5'd31} :  data_out <= clock_divider;                          // basic mode
-    default :  data_out <= 8'h0;                                   // the rest is read as 0
+  case({extended_mode, addr[4:0]})  /* synthesis parallel_case */ 
+    {1'h1, 5'd00} :  data_out = {4'b0000, mode_ext[3:1], mode[0]};      // extended mode
+    {1'h1, 5'd01} :  data_out = 8'hff;                                   // extended mode
+    {1'h1, 5'd02} :  data_out = status;                                 // extended mode
+    {1'h1, 5'd03} :  data_out = irq_reg;                                // extended mode
+    {1'h1, 5'd04} :  data_out = irq_en_ext;                             // extended mode
+    {1'h1, 5'd06} :  data_out = bus_timing_0;                           // extended mode
+    {1'h1, 5'd07} :  data_out = bus_timing_1;                           // extended mode
+    {1'h1, 5'd11} :  data_out = {3'h0, arbitration_lost_capture[4:0]};  // extended mode
+    {1'h1, 5'd12} :  data_out = error_capture_code;                     // extended mode
+    {1'h1, 5'd13} :  data_out = error_warning_limit;                    // extended mode
+    {1'h1, 5'd14} :  data_out = rx_err_cnt;                             // extended mode
+    {1'h1, 5'd15} :  data_out = tx_err_cnt;                             // extended mode
+    {1'h1, 5'd16} :  data_out = acceptance_code_0;                      // extended mode
+    {1'h1, 5'd17} :  data_out = acceptance_code_1;                      // extended mode
+    {1'h1, 5'd18} :  data_out = acceptance_code_2;                      // extended mode
+    {1'h1, 5'd19} :  data_out = acceptance_code_3;                      // extended mode
+    {1'h1, 5'd20} :  data_out = acceptance_mask_0;                      // extended mode
+    {1'h1, 5'd21} :  data_out = acceptance_mask_1;                      // extended mode
+    {1'h1, 5'd22} :  data_out = acceptance_mask_2;                      // extended mode
+    {1'h1, 5'd23} :  data_out = acceptance_mask_3;                      // extended mode
+    {1'h1, 5'd24} :  data_out = 8'h0;                                   // extended mode
+    {1'h1, 5'd25} :  data_out = 8'h0;                                   // extended mode
+    {1'h1, 5'd26} :  data_out = 8'h0;                                   // extended mode
+    {1'h1, 5'd27} :  data_out = 8'h0;                                   // extended mode
+    {1'h1, 5'd28} :  data_out = 8'h0;                                   // extended mode
+    {1'h1, 5'd29} :  data_out = {1'b0, rx_message_counter};             // extended mode
+    {1'h1, 5'd31} :  data_out = clock_divider;                          // extended mode
+    {1'h0, 5'd00} :  data_out = {3'b001, mode_basic[4:1], mode[0]};     // basic mode
+    {1'h0, 5'd01} :  data_out = 8'hff;                                  // basic mode
+    {1'h0, 5'd02} :  data_out = status;                                 // basic mode
+    {1'h0, 5'd03} :  data_out = {4'he, irq_reg[3:0]};                   // basic mode
+    {1'h0, 5'd04} :  data_out = reset_mode? acceptance_code_0 : 8'hff;  // basic mode
+    {1'h0, 5'd05} :  data_out = reset_mode? acceptance_mask_0 : 8'hff;  // basic mode
+    {1'h0, 5'd06} :  data_out = reset_mode? bus_timing_0 : 8'hff;       // basic mode
+    {1'h0, 5'd07} :  data_out = reset_mode? bus_timing_1 : 8'hff;       // basic mode
+    {1'h0, 5'd10} :  data_out = reset_mode? 8'hff : tx_data_0;          // basic mode
+    {1'h0, 5'd11} :  data_out = reset_mode? 8'hff : tx_data_1;          // basic mode
+    {1'h0, 5'd12} :  data_out = reset_mode? 8'hff : tx_data_2;          // basic mode
+    {1'h0, 5'd13} :  data_out = reset_mode? 8'hff : tx_data_3;          // basic mode
+    {1'h0, 5'd14} :  data_out = reset_mode? 8'hff : tx_data_4;          // basic mode
+    {1'h0, 5'd15} :  data_out = reset_mode? 8'hff : tx_data_5;          // basic mode
+    {1'h0, 5'd16} :  data_out = reset_mode? 8'hff : tx_data_6;          // basic mode
+    {1'h0, 5'd17} :  data_out = reset_mode? 8'hff : tx_data_7;          // basic mode
+    {1'h0, 5'd18} :  data_out = reset_mode? 8'hff : tx_data_8;          // basic mode
+    {1'h0, 5'd19} :  data_out = reset_mode? 8'hff : tx_data_9;          // basic mode
+    {1'h0, 5'd31} :  data_out = clock_divider;                          // basic mode
+    default :  data_out = 8'h00;                                   // the rest is read as 0
   endcase
 end
 

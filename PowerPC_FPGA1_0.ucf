@@ -99,7 +99,7 @@ NET stxE_pad_o    LOC=A18;
 
 NET srxF_pad_i    LOC=B18;
 NET stxF_pad_o    LOC=A19;
-#NET intD_o        #LOC=AA15;#EMIOS12
+#NET intD_o        #
 
 ########   LED  ###########################
 #NET led1      LOC=D1;
@@ -131,7 +131,7 @@ NET output_pad0<2> LOC= E1;#LED3
 ####FPGA CAN##############
 NET can0_rx   LOC = W8;
 NET can0_tx   LOC = Y8;
-NET can0_irq  LOC = AA15;#EMIOS 12
+NET can0_irq  LOC = Y15;#EMIOS 10
 
 
 

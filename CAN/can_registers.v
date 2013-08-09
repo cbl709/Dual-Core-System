@@ -16,6 +16,7 @@ module can_registers
   data_in,
   data_out,
   irq_n,
+  irq,   //added by cbl
 
   sample_point,
   transmitting,
@@ -141,6 +142,7 @@ output  [7:0] data_out;
 reg     [7:0] data_out;
 
 output        irq_n;
+output        irq; // added by cbl
 
 input         sample_point;
 input         transmitting;
@@ -278,11 +280,12 @@ wire    [7:0] irq_reg;
 wire          irq;
 
 wire we_mode                  = cs & we & (addr == 8'd0);
+
 wire we_command               = cs & we & (addr == 8'd1);
 wire we_bus_timing_0          = cs & we & (addr == 8'd6) & reset_mode;
 wire we_bus_timing_1          = cs & we & (addr == 8'd7) & reset_mode;
 wire we_clock_divider_low     = cs & we & (addr == 8'd31);
-wire we_clock_divider_hi      = we_clock_divider_low & reset_mode;
+wire we_clock_divider_hi      = we_clock_divider_low; /*& reset_mode;*/
 
 wire read = cs & (~we);
 wire read_irq_reg = read & (addr == 8'd3);
@@ -376,7 +379,7 @@ assign acceptance_filter_mode = extended_mode & mode_ext[3];
 
 assign receive_irq_en_basic  = mode_basic[1];
 assign transmit_irq_en_basic = mode_basic[2];
-assign error_irq_en_basic    = mode_basic[3];
+assign error_irq_en_basic    = 0;//mode_basic[3];
 assign overrun_irq_en_basic  = mode_basic[4];
 /* End Mode register */
 
@@ -556,13 +559,13 @@ can_register #(8) IRQ_EN_REG
 );
 
 
-assign bus_error_irq_en             = irq_en_ext[7];
-assign arbitration_lost_irq_en      = irq_en_ext[6];
-assign error_passive_irq_en         = irq_en_ext[5];
-assign data_overrun_irq_en_ext      = irq_en_ext[3];
-assign error_warning_irq_en_ext     = irq_en_ext[2];
-assign transmit_irq_en_ext          = irq_en_ext[1];
-assign receive_irq_en_ext           = irq_en_ext[0];
+assign bus_error_irq_en             = extended_mode&irq_en_ext[7];
+assign arbitration_lost_irq_en      = extended_mode&irq_en_ext[6];
+assign error_passive_irq_en         = extended_mode&irq_en_ext[5];
+assign data_overrun_irq_en_ext      = extended_mode&irq_en_ext[3];
+assign error_warning_irq_en_ext     = extended_mode&irq_en_ext[2];
+assign transmit_irq_en_ext          = extended_mode&irq_en_ext[1];
+assign receive_irq_en_ext           = extended_mode&irq_en_ext[0];
 /* End Bus Timing 0 register */
 
 
@@ -641,7 +644,7 @@ can_register_asyn #(3, 0) CLOCK_DIVIDER_REG_LOW
   .rst(rst)
 );
 
-assign extended_mode = clock_divider[7];
+assign extended_mode = 0;/*clock_divider[7];*/
 assign clock_off     = clock_divider[3];
 assign cd[2:0]       = clock_divider[2:0];
 
@@ -1038,7 +1041,8 @@ always @ (posedge clk or posedge rst)
 begin
   if (rst)
     bus_error_irq <= 1'b0;
-  else if (set_bus_error_irq & bus_error_irq_en)
+//  else if (set_bus_error_irq & bus_error_irq_en)
+  else if (set_bus_error_irq & bus_error_irq_en& extended_mode)// changed by cbl
     bus_error_irq <=#Tp 1'b1;
   else if (reset_mode || read_irq_reg)
     bus_error_irq <=#Tp 1'b0;
@@ -1050,7 +1054,7 @@ always @ (posedge clk or posedge rst)
 begin
   if (rst)
     arbitration_lost_irq <= 1'b0;
-  else if (set_arbitration_lost_irq & arbitration_lost_irq_en)
+  else if (set_arbitration_lost_irq & arbitration_lost_irq_en &extended_mode) // changed by cbl
     arbitration_lost_irq <=#Tp 1'b1;
   else if (reset_mode || read_irq_reg)
     arbitration_lost_irq <=#Tp 1'b0;
@@ -1063,7 +1067,7 @@ always @ (posedge clk or posedge rst)
 begin
   if (rst)
     error_passive_irq <= 1'b0;
-  else if ((node_error_passive & (~node_error_passive_q) | (~node_error_passive) & node_error_passive_q & node_error_active) & error_passive_irq_en)
+  else if ((node_error_passive & (~node_error_passive_q) | (~node_error_passive) & node_error_passive_q & node_error_active) & error_passive_irq_en & extended_mode) //changed by cbl
     error_passive_irq <=#Tp 1'b1;
   else if (reset_mode || read_irq_reg)
     error_passive_irq <=#Tp 1'b0;
@@ -1073,17 +1077,20 @@ end
 
 assign irq_reg = {bus_error_irq, arbitration_lost_irq, error_passive_irq, 1'b0, data_overrun_irq, error_irq, transmit_irq, receive_irq};
 
-assign irq = data_overrun_irq | transmit_irq | receive_irq | error_irq | bus_error_irq | arbitration_lost_irq | error_passive_irq;
-
+assign irq = receive_irq|data_overrun_irq | transmit_irq; /*|  error_irq ;/*| bus_error_irq | arbitration_lost_irq | error_passive_irq;*/
+//assign irq=receive_irq;
 
 always @ (posedge clk or posedge rst)
 begin
   if (rst)
-    irq_n <= 1'b1;
+    //irq_n <= 1'b1;
+      irq_n <=0;
   else if (read_irq_reg || release_buffer)
-    irq_n <=#Tp 1'b1;
+    //irq_n <=#Tp 1'b1;
+      irq_n <=0;
   else if (irq)
-    irq_n <=#Tp 1'b0;
+   // irq_n <=#Tp 1'b0;
+      irq_n <=1;
 end
 
 

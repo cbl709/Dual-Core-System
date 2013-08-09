@@ -199,6 +199,7 @@ can_registers i_can_registers
   .data_in(data_in),
   .data_out(data_out_regs),
   .irq_n(irq_on),
+  //.irq(irq_on),
 
   .sample_point(sample_point),
   .transmitting(transmitting),

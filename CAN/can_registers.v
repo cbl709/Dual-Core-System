@@ -268,7 +268,7 @@ reg           node_error_passive_q;
 reg           transmit_buffer_status;
 reg           single_shot_transmission;
 reg           self_rx_request;
-reg           irq_n;
+reg           irq_n=0;
 
 // Some interrupts exist in basic mode and in extended mode. Since they are in different registers they need to be multiplexed.
 wire          data_overrun_irq_en;
@@ -988,48 +988,44 @@ assign transmit_irq_en      = extended_mode ? transmit_irq_en_ext      : transmi
 assign receive_irq_en       = extended_mode ? receive_irq_en_ext       : receive_irq_en_basic;
 
 
-reg data_overrun_irq;
-always @ (posedge clk or posedge rst)
+reg data_overrun_irq=0;
+always @ (posedge clk )
 begin
-  if (rst)
-    data_overrun_irq <= 1'b0;
-  else if (overrun & (~overrun_q) & data_overrun_irq_en)
+  
+  if (overrun & (~overrun_q) & data_overrun_irq_en)
     data_overrun_irq <=#Tp 1'b1;
   else if (reset_mode || read_irq_reg)
     data_overrun_irq <=#Tp 1'b0;
 end
 
 
-reg transmit_irq;
-always @ (posedge clk or posedge rst)
+reg transmit_irq=0;
+always @ (posedge clk )
 begin
-  if (rst)
-    transmit_irq <= 1'b0;
-  else if (reset_mode || read_irq_reg)
+  
+  if (reset_mode || read_irq_reg)
     transmit_irq <=#Tp 1'b0;
   else if (transmit_buffer_status & (~transmit_buffer_status_q) & transmit_irq_en)
     transmit_irq <=#Tp 1'b1;
 end
 
 
-reg receive_irq;
-always @ (posedge clk or posedge rst)
+reg receive_irq=0;
+always @ (posedge clk )
 begin
-  if (rst)
-    receive_irq <= 1'b0;
-  else if ((~info_empty) & (~receive_irq) & receive_irq_en)
+  
+  if ((~info_empty) & (~receive_irq) & receive_irq_en)
     receive_irq <=#Tp 1'b1;
   else if (reset_mode || release_buffer)
     receive_irq <=#Tp 1'b0;
 end
 
 
-reg error_irq;
-always @ (posedge clk or posedge rst)
+reg error_irq=0;
+always @ (posedge clk )
 begin
-  if (rst)
-    error_irq <= 1'b0;
-  else if (((error_status ^ error_status_q) | (node_bus_off ^ node_bus_off_q)) & error_warning_irq_en)
+ 
+if (((error_status ^ error_status_q) | (node_bus_off ^ node_bus_off_q)) & error_warning_irq_en)
     error_irq <=#Tp 1'b1;
   else if (read_irq_reg)
     error_irq <=#Tp 1'b0;
@@ -1080,12 +1076,12 @@ assign irq_reg = {bus_error_irq, arbitration_lost_irq, error_passive_irq, 1'b0, 
 assign irq = receive_irq|data_overrun_irq | transmit_irq; /*|  error_irq ;/*| bus_error_irq | arbitration_lost_irq | error_passive_irq;*/
 //assign irq=receive_irq;
 
-always @ (posedge clk or posedge rst)
+always @ (posedge clk )
 begin
-  if (rst)
+  /*if (rst)
     //irq_n <= 1'b1;
-      irq_n <=0;
-  else if (read_irq_reg || release_buffer)
+      irq_n <=0;*/
+  if (read_irq_reg || release_buffer)
     //irq_n <=#Tp 1'b1;
       irq_n <=0;
   else if (irq)

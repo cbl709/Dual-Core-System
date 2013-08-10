@@ -66,8 +66,8 @@ end
 wire re_o;
 wire we_o;
 
-assign re_o = re_d2;
-assign we_o = we_d2;
+assign re_o = re;//re_d2;
+assign we_o = we;//we_d2;
 
 assign addr[21:0]=ebi_addr[23:2];
       

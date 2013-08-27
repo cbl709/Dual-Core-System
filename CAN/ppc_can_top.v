@@ -3,6 +3,7 @@
 `timescale 1ns / 1ps
 module ppc_can_top(
                    clk,
+                   rst,
                    addr,
                    can_wr_en,
                    can_rd_en,
@@ -16,6 +17,7 @@ module ppc_can_top(
                   );
 
 input        clk;
+input        rst;
 input  [7:0] addr;
 input        can_wr_en;
 input        can_rd_en;
@@ -29,7 +31,7 @@ output [7:0] cpu_read_can_data;
  can_top can0
 ( 
   
-    .rst_i(),
+    .rst_i(rst),
     .addr(addr),
     .rd_i(can_rd_en),
     .wr_i(can_wr_en),

@@ -124,14 +124,15 @@ NET nf_we_n LOC=AB18;
 NET r       LOC=AB13;
 
 ####FPGA IO ############################
-NET output_pad0<0> LOC= D1;#LED1
-NET output_pad0<1> LOC= D2;#LED2
-NET output_pad0<2> LOC= E1;#LED3
+#NET output_pad0<0> LOC= D1;#LED1
+#NET output_pad0<1> LOC= D2;#LED2
+#NET output_pad0<2> LOC= E1;#LED3
 
 ####FPGA CAN##############
 NET can0_rx   LOC = W8;
 NET can0_tx   LOC = Y8;
-NET can0_irq  LOC = Y15;#EMIOS 10
+NET can0_irq  LOC = AA16;#EMIOS 8
+#NET can0_irq  LOC = D1;#LED1
 
 
 

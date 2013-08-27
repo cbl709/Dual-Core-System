@@ -198,9 +198,8 @@ can_registers i_can_registers
   .addr(addr),
   .data_in(data_in),
   .data_out(data_out_regs),
-  .irq_n(irq_on),
-  //.irq(irq_on),
-
+  .irq_on(irq_on),
+  
   .sample_point(sample_point),
   .transmitting(transmitting),
   .set_reset_mode(set_reset_mode),

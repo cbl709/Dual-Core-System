@@ -3,64 +3,100 @@
 `include "uart_defines.v"
 
 ///注意地址是忽略A30,A31的
-`define CR0  22'h0000  // configuration register
-`define TTR0 22'h0001
-`define SR0  22'h0002  // status register
-`define TDR0 22'h0003
-`define RDR0 22'h0004
+`define CR0  16'h0000  // configuration register
+`define TTR0 16'h0001
+`define SR0  16'h0002  // status register
+`define TDR0 16'h0003
+`define RDR0 16'h0004
 
-`define CR1  22'h0005  // configuration register
-`define TTR1 22'h0006
-`define SR1  22'h0007  // status register
-`define TDR1 22'h0008
-`define RDR1 22'h0009
+`define CR1  16'h0005  // configuration register
+`define TTR1 16'h0006
+`define SR1  16'h0007  // status register
+`define TDR1 16'h0008
+`define RDR1 16'h0009
 
-`define CR2  22'h000A  // configuration register
-`define TTR2 22'h000B
-`define SR2  22'h000C  // status register
-`define TDR2 22'h000D
-`define RDR2 22'h000E
+`define CR2  16'h000A  // configuration register
+`define TTR2 16'h000B
+`define SR2  16'h000C  // status register
+`define TDR2 16'h000D
+`define RDR2 16'h000E
 
-`define CR3  22'h000F  // configuration register
-`define TTR3 22'h0010
-`define SR3  22'h0011  // status register
-`define TDR3 22'h0012
-`define RDR3 22'h0013
+`define CR3  16'h000F  // configuration register
+`define TTR3 16'h0010
+`define SR3  16'h0011  // status register
+`define TDR3 16'h0012
+`define RDR3 16'h0013
 
-`define CR4  22'h0014  // configuration register
-`define TTR4 22'h0015
-`define SR4  22'h0016  // status register
-`define TDR4 22'h0017
-`define RDR4 22'h0018
+`define CR4  16'h0014  // configuration register
+`define TTR4 16'h0015
+`define SR4  16'h0016  // status register
+`define TDR4 16'h0017
+`define RDR4 16'h0018
 
-`define CR5  22'h0019  // configuration register
-`define TTR5 22'h001A
-`define SR5  22'h001B  // status register
-`define TDR5 22'h001C
-`define RDR5 22'h001D
+`define CR5  16'h0019  // configuration register
+`define TTR5 16'h001A
+`define SR5  16'h001B  // status register
+`define TDR5 16'h001C
+`define RDR5 16'h001D
+
+`define CR6  16'h001F  // configuration register
+`define TTR6 16'h0020
+`define SR6  16'h0021  // status register
+`define TDR6 16'h0022
+`define RDR6 16'h0023
+
+`define CR7  16'h0024  // configuration register
+`define TTR7 16'h0025
+`define SR7  16'h0026  // status register
+`define TDR7 16'h0027
+`define RDR7 16'h0028
+
+`define CR8  16'h0029  // configuration register
+`define TTR8 16'h002A
+`define SR8  16'h002B  // status register
+`define TDR8 16'h002C
+`define RDR8 16'h002D
+
+`define CR9  16'h002F  // configuration register
+`define TTR9 16'h0030
+`define SR9  16'h0031  // status register
+`define TDR9 16'h0032
+`define RDR9 16'h0033
+
+`define CR10  16'h0034  // configuration register
+`define TTR10 16'h0035
+`define SR10  16'h0036  // status register
+`define TDR10 16'h0037
+`define RDR10 16'h0038
+
+`define CR11  16'h0039  // configuration register
+`define TTR11 16'h003A
+`define SR11  16'h003B  // status register
+`define TDR11 16'h003C
+`define RDR11 16'h003D
 
 /////////FPGA IO////////////////
-`define FPGA_O0   22'h0100
-`define FPGA_O1   22'h0101
-`define FPGA_O2   22'h0102
+`define FPGA_O0   16'h0100
+`define FPGA_O1   16'h0101
+`define FPGA_O2   16'h0102
 
-`define FPGA_I0   22'h0103
-`define FPGA_I1   22'h0104
-`define FPGA_I2   22'h0105
+`define FPGA_I0   16'h0103
+`define FPGA_I1   16'h0104
+`define FPGA_I2   16'h0105
 
 ////////FPGA CAN////////////////
-`define CAN0_BEGIN 22'h0200
-`define CAN0_END   22'h021f
+`define CAN0_BEGIN 16'h0200
+`define CAN0_END   16'h021f
 
 //////////nand flash controller registers///////
-`define PAGE_BEGIN  22'h1000  //4KB的ram地址
-`define PAGE_END    22'h13ff  
+`define PAGE_BEGIN  16'h1000  //4KB的ram地址
+`define PAGE_END    16'h13ff  
 
-`define NFADDR0     22'h0300    
-`define NFADDR1     22'h0301    
-`define NFCR        22'h0302    
-`define ID          22'h0303    
-`define STATUS      22'h0304   
+`define NFADDR0     16'h0300    
+`define NFADDR1     16'h0301    
+`define NFCR        16'h0302    
+`define ID          16'h0303    
+`define STATUS      16'h0304   
 
 
 
@@ -74,6 +110,7 @@ module regs (
                 re,
                 write_data,
                 read_data,
+                
                 cr0,
                 ttr0,
                 sr0,
@@ -110,6 +147,42 @@ module regs (
                 tdr5,
                 rdr5,
                 
+                cr6,
+                ttr6,
+                sr6,
+                tdr6,
+                rdr6,
+                
+                cr7,
+                ttr7,
+                sr7,
+                tdr7,
+                rdr7,
+                
+                cr8,
+                ttr8,
+                sr8,
+                tdr8,
+                rdr8,
+                
+                cr9,
+                ttr9,
+                sr9,
+                tdr9,
+                rdr9,
+                
+                cr10,
+                ttr10,
+                sr10,
+                tdr10,
+                rdr10,
+                
+                cr11,
+                ttr11,
+                sr11,
+                tdr11,
+                rdr11,
+                
                 tx0_write,
                 rx0_read,
                 sr0_read,
@@ -133,6 +206,35 @@ module regs (
                 tx5_write,
                 rx5_read,
                 sr5_read,
+                
+                tx6_write,
+                rx6_read,
+                sr6_read,
+                
+                tx7_write,
+                rx7_read,
+                sr7_read,
+                
+                tx8_write,
+                rx8_read,
+                sr8_read,
+                
+                tx9_write,
+                rx9_read,
+                sr9_read,
+                
+                tx10_write,
+                rx10_read,
+                sr10_read,
+                
+                tx10_write,
+                rx10_read,
+                sr10_read,
+                
+                tx11_write,
+                rx11_read,
+                sr11_read,
+                
                 
                 ///FPGA IO/////
                 fpga_o0,
@@ -158,8 +260,8 @@ module regs (
                 cpu_wr_ram_data,// 
                 cpu_rd_ram_data,
                 nfcr,           //nand flash controller register
-                nf_addr0,
-                nf_addr1
+                nfaddr0,
+                nfaddr1
                 
                 
                 
@@ -170,6 +272,7 @@ input we;
 input re;
 input  [31:0] write_data;
 output [31:0] read_data;
+
 input  [31:0] sr0;
 input  [31:0] rdr0;
 output [31:0] cr0;
@@ -206,6 +309,42 @@ input  [31:0] rdr5;
 output [31:0] cr5;
 output [31:0] tdr5;
 
+input  [31:0] sr6;
+input  [31:0] rdr6;
+output [31:0] cr6;
+output [31:0] ttr6;
+output [31:0] tdr6;
+
+input  [31:0] sr7;
+output [31:0] ttr7;
+input  [31:0] rdr7;
+output [31:0] cr7;
+output [31:0] tdr7;
+
+input  [31:0] sr8;
+output [31:0] ttr8;
+input  [31:0] rdr8;
+output [31:0] cr8;
+output [31:0] tdr8;
+
+input  [31:0] sr9;
+output [31:0] ttr9;
+input  [31:0] rdr9;
+output [31:0] cr9;
+output [31:0] tdr9;
+
+input  [31:0] sr10;
+output [31:0] ttr10;
+input  [31:0] rdr10;
+output [31:0] cr10;
+output [31:0] tdr10;
+
+input  [31:0] sr11;
+output [31:0] ttr11;
+input  [31:0] rdr11;
+output [31:0] cr11;
+output [31:0] tdr11;
+
 
 
 output              tx0_write;
@@ -232,6 +371,30 @@ output              tx5_write;
 output              sr5_read;
 output              rx5_read;
 
+output              tx6_write;
+output              sr6_read;
+output              rx6_read;
+
+output              tx7_write;
+output              sr7_read;
+output              rx7_read;
+
+output              tx8_write;
+output              sr8_read;
+output              rx8_read;
+
+output              tx9_write;
+output              sr9_read;
+output              rx9_read;
+
+output              tx10_write;
+output              sr10_read;
+output              rx10_read;
+
+output              tx11_write;
+output              sr11_read;
+output              rx11_read;
+
 ///FPGA IO//////////////////
  output [31:0]             fpga_o0;
  output [31:0]             fpga_o1;
@@ -255,8 +418,8 @@ input        [31:0] id;     //nand flash ID号
 input        [7:0]  status;
 input        [31:0] cpu_rd_ram_data;
 output       [7:0]  nfcr;
-output       [31:0] nf_addr0;
-output       [31:0] nf_addr1;
+output       [31:0] nfaddr0;
+output       [31:0] nfaddr1;
 output              cpu_wr_ram_en;
 output       [9:0]  cpu_wr_ram_addr;//4kB,1024*32bits 的内部ram大小
 output       [31:0] cpu_wr_ram_data;
@@ -294,6 +457,30 @@ assign tx5_write = we&&( addr == `TDR5);
 assign sr5_read  = re&&( addr == `SR5);
 assign rx5_read  = re&&( addr == `RDR5);
 
+assign tx6_write = we&&( addr == `TDR6);
+assign sr6_read  = re&&( addr == `SR6);
+assign rx6_read  = re&&( addr == `RDR6);
+
+assign tx7_write = we&&( addr == `TDR7);
+assign sr7_read  = re&&( addr == `SR7);
+assign rx7_read  = re&&( addr == `RDR7);
+
+assign tx8_write = we&&( addr == `TDR8);
+assign sr8_read  = re&&( addr == `SR8);
+assign rx8_read  = re&&( addr == `RDR8);
+
+assign tx9_write = we&&( addr == `TDR9);
+assign sr9_read  = re&&( addr == `SR9);
+assign rx9_read  = re&&( addr == `RDR9);
+
+assign tx10_write = we&&( addr == `TDR10);
+assign sr10_read  = re&&( addr == `SR10);
+assign rx10_read  = re&&( addr == `RDR10);
+
+assign tx11_write = we&&( addr == `TDR11);
+assign sr11_read  = re&&( addr == `SR11);
+assign rx11_read  = re&&( addr == `RDR11);
+
 /////////////////UART registers//////////////////////    
 reg [31:0]                              cr0= 32'h000c000;   // configuration register
 reg [31:0]                              cr1= 32'h000c000;
@@ -301,6 +488,12 @@ reg [31:0]                              cr2= 32'h000c000;   // configuration reg
 reg [31:0]                              cr3= 32'h000c000;
 reg [31:0]                              cr4= 32'h000c000;   // configuration register
 reg [31:0]                              cr5= 32'h000c000;
+reg [31:0]                              cr6= 32'h000c000;   // configuration register
+reg [31:0]                              cr7= 32'h000c000;
+reg [31:0]                              cr8= 32'h000c000;   // configuration register
+reg [31:0]                              cr9= 32'h000c000;
+reg [31:0]                              cr10=32'h000c000;   // configuration register
+reg [31:0]                              cr11=32'h000c000;
 
 reg [31:0]                             ttr0= 32'h0000104;   //默认4个字节时间timeout，trigger level默认为1
 reg [31:0]                             ttr1= 32'h0000104;
@@ -308,6 +501,12 @@ reg [31:0]                             ttr2= 32'h0000104;
 reg [31:0]                             ttr3= 32'h0000104;
 reg [31:0]                             ttr4= 32'h0000104;
 reg [31:0]                             ttr5= 32'h0000104;
+reg [31:0]                             ttr6= 32'h0000104;   //默认4个字节时间timeout，trigger level默认为1
+reg [31:0]                             ttr7= 32'h0000104;
+reg [31:0]                             ttr8= 32'h0000104;
+reg [31:0]                             ttr9= 32'h0000104;
+reg [31:0]                             ttr10=32'h0000104;
+reg [31:0]                             ttr11=32'h0000104;
 
 reg [31:0]                              tdr0 =32'h00000000;
 reg [31:0]                              tdr1 =32'h00000000;
@@ -315,6 +514,12 @@ reg [31:0]                              tdr2 =32'h00000000;
 reg [31:0]                              tdr3 =32'h00000000;
 reg [31:0]                              tdr4 =32'h00000000;
 reg [31:0]                              tdr5 =32'h00000000;
+reg [31:0]                              tdr6 =32'h00000000;
+reg [31:0]                              tdr7 =32'h00000000;
+reg [31:0]                              tdr8 =32'h00000000;
+reg [31:0]                              tdr9 =32'h00000000;
+reg [31:0]                              tdr10=32'h00000000;
+reg [31:0]                              tdr11=32'h00000000;
 
 //////FPGA IO///////////////
 reg [31:0]             fpga_o0=32'hffffffff; //IO 口默认输出高电平
@@ -332,7 +537,7 @@ reg [31:0]                           nfaddr1 =32'h00000000;
 always@( posedge clk)
 begin
    if(we) begin
-   case(addr)
+   case(addr[15:0])
    /////UART/////////////////
    `CR0 : cr0   <= write_data[31:0];
    `CR1 : cr1   <= write_data[31:0];
@@ -340,6 +545,12 @@ begin
    `CR3 : cr3   <= write_data[31:0];
    `CR4 : cr4   <= write_data[31:0];
    `CR5 : cr5   <= write_data[31:0];
+   `CR6 : cr6   <= write_data[31:0];
+   `CR7 : cr7   <= write_data[31:0];
+   `CR8 : cr8   <= write_data[31:0];
+   `CR9 : cr9   <= write_data[31:0];
+   `CR10 : cr10  <= write_data[31:0];
+   `CR11 : cr11  <= write_data[31:0];
    
    `TTR0: ttr0  <= write_data[31:0];
    `TTR1: ttr1  <= write_data[31:0];
@@ -347,6 +558,12 @@ begin
    `TTR3: ttr3  <= write_data[31:0];
    `TTR4: ttr4  <= write_data[31:0];
    `TTR5: ttr5  <= write_data[31:0];
+   `TTR6: ttr6  <= write_data[31:0];
+   `TTR7: ttr7  <= write_data[31:0];
+   `TTR8: ttr8  <= write_data[31:0];
+   `TTR9: ttr9  <= write_data[31:0];
+   `TTR10:ttr10 <= write_data[31:0];
+   `TTR11:ttr11 <= write_data[31:0];
    
    `TDR0: tdr0  <= write_data[31:0];
    `TDR1: tdr1  <= write_data[31:0];
@@ -354,6 +571,12 @@ begin
    `TDR3: tdr3  <= write_data[31:0];
    `TDR4: tdr4  <= write_data[31:0];
    `TDR5: tdr5  <= write_data[31:0];
+   `TDR6: tdr6  <= write_data[31:0];
+   `TDR7: tdr7  <= write_data[31:0];
+   `TDR8: tdr8  <= write_data[31:0];
+   `TDR9: tdr9  <= write_data[31:0];
+   `TDR10:tdr10 <= write_data[31:0];
+   `TDR11:tdr11 <= write_data[31:0];
    
    ////FPGA IO
    `FPGA_O0: fpga_o0 <= write_data[31:0];
@@ -399,6 +622,36 @@ begin
   if(cr5[ `CR_TX_RESET ]) //tx_reset
     cr5[ `CR_TX_RESET ]<=0;
     
+     if(cr6[ `CR_RX_RESET ]) //rx_reset
+    cr6[ `CR_RX_RESET ]<=0;
+  if(cr6[ `CR_TX_RESET ]) //tx_reset
+    cr6[ `CR_TX_RESET ]<=0;
+    
+  if(cr7[ `CR_RX_RESET ]) //rx_reset
+    cr7[ `CR_RX_RESET ]<=0;
+  if(cr7[ `CR_TX_RESET ]) //tx_reset
+    cr7[ `CR_TX_RESET ]<=0;
+    
+    if(cr8[ `CR_RX_RESET ]) //rx_reset
+    cr8[ `CR_RX_RESET ]<=0;
+  if(cr8[ `CR_TX_RESET ]) //tx_reset
+    cr8[ `CR_TX_RESET ]<=0;
+    
+    if(cr9[ `CR_RX_RESET ]) //rx_reset
+    cr9[ `CR_RX_RESET ]<=0;
+  if(cr9[ `CR_TX_RESET ]) //tx_reset
+    cr9[ `CR_TX_RESET ]<=0;
+    
+     if(cr10[ `CR_RX_RESET ]) //rx_reset
+    cr10[ `CR_RX_RESET ]<=0;
+  if(cr10[ `CR_TX_RESET ]) //tx_reset
+    cr10[ `CR_TX_RESET ]<=0;
+    
+    if(cr11[ `CR_RX_RESET ]) //rx_reset
+    cr11[ `CR_RX_RESET ]<=0;
+  if(cr11[ `CR_TX_RESET ]) //tx_reset
+    cr11[ `CR_TX_RESET ]<=0;
+    
    if(done) // a command has been finished 
       nfcr[7] <= 0; // disable start signal 
    
@@ -406,7 +659,7 @@ end
 
 ///////////read registers/////////////////
 reg [31:0] read_data=32'h00000000;
-always@(re or addr)
+always@(posedge clk)
 begin
   if(re) begin
   case(addr)
@@ -441,6 +694,36 @@ begin
   `SR5:  read_data <= sr5;
   `TDR5: read_data <= tdr5;
   `RDR5: read_data <= rdr5;
+  
+  `CR6:  read_data <= cr6;
+  `SR6:  read_data <= sr6;
+  `TDR6: read_data <= tdr6;
+  `RDR6: read_data <= rdr6;
+  
+  `CR7:  read_data <= cr7;
+  `SR7:  read_data <= sr7;
+  `TDR7: read_data <= tdr7;
+  `RDR7: read_data <= rdr7;
+  
+  `CR8 : read_data <= cr8;
+  `SR8 : read_data <= sr8;
+  `TDR8 :read_data <= tdr8;
+  `RDR8 :read_data <= rdr8;
+  
+  `CR9:  read_data <= cr9;
+  `SR9:  read_data <= sr9;
+  `TDR9: read_data <= tdr9;
+  `RDR9: read_data <= rdr9;
+  
+  `CR10: read_data <= cr10;
+  `SR10: read_data <= sr10;
+  `TDR10:read_data <= tdr10;
+  `RDR10:read_data <= rdr10;
+  
+  `CR11: read_data <= cr11;
+  `SR11: read_data <= sr11;
+  `TDR11:read_data <= tdr11;
+  `RDR11:read_data <= rdr11;
   
   ///FPGA IO///////////////////
   `FPGA_O0: read_data <= fpga_o0;

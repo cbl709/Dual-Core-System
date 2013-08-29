@@ -52,6 +52,30 @@ module top(
        srxF_pad_i,
        intF_o,
        
+       stxG_pad_o, // uart out
+       srxG_pad_i,
+       intG_o,
+       
+       stxH_pad_o, // uart out
+       srxH_pad_i,
+       intH_o,
+       
+       stxI_pad_o, // uart out
+       srxI_pad_i,
+       intI_o,
+       
+       stxJ_pad_o, // uart out
+       srxJ_pad_i,
+       intJ_o,
+       
+       stxK_pad_o, // uart out
+       srxK_pad_i,
+       intK_o,
+       
+       stxL_pad_o, // uart out
+       srxL_pad_i,
+       intL_o,
+       
 ///////FPGA IO//////////////////////////////////////////////////////////
        input_pad0,
        input_pad1,
@@ -109,6 +133,30 @@ module top(
      input  srxF_pad_i;
      output intF_o;
      output stxF_pad_o;
+     
+      input  srxG_pad_i;
+     output intG_o;
+     output stxG_pad_o;
+     
+     input  srxH_pad_i;
+     output intH_o;
+     output stxH_pad_o;
+     
+     input  srxI_pad_i;
+     output intI_o;
+     output stxI_pad_o;
+     
+     input  srxJ_pad_i;
+     output intJ_o;
+     output stxJ_pad_o;
+     
+     input  srxK_pad_i;
+     output intK_o;
+     output stxK_pad_o;
+     
+     input  srxL_pad_i;
+     output intL_o;
+     output stxL_pad_o;
      
 //////NAND Flash controller/////////////////////////////////////////////
      output               nf_cle;
@@ -168,6 +216,42 @@ module top(
      wire [31:0] sr5;
      wire [31:0] tdr5;
      wire [31:0] rdr5;
+     
+     wire [31:0] cr6;
+     wire [31:0] ttr6;
+     wire [31:0] sr6;
+     wire [31:0] tdr6;
+     wire [31:0] rdr6;
+     
+     wire [31:0] cr7;
+     wire [31:0] ttr7;
+     wire [31:0] sr7;
+     wire [31:0] tdr7;
+     wire [31:0] rdr7;
+     
+     wire [31:0] cr8;
+     wire [31:0] ttr8;
+     wire [31:0] sr8;
+     wire [31:0] tdr8;
+     wire [31:0] rdr8;
+     
+     wire [31:0] cr9;
+     wire [31:0] ttr9;
+     wire [31:0] sr9;
+     wire [31:0] tdr9;
+     wire [31:0] rdr9;
+     
+     wire [31:0] cr10;
+     wire [31:0] ttr10;
+     wire [31:0] sr10;
+     wire [31:0] tdr10;
+     wire [31:0] rdr10;
+     
+     wire [31:0] cr11;
+     wire [31:0] ttr11;
+     wire [31:0] sr11;
+     wire [31:0] tdr11;
+     wire [31:0] rdr11;
      
      wire [21:0] addr;
      
@@ -335,6 +419,68 @@ regs regs(
                 .rx5_read(rx5_read),
                 .sr5_read(sr5_read),
                 
+                 .cr6(cr6),
+                .ttr6(ttr6),
+                .sr6(sr6),
+                .tdr6(tdr6),
+                .rdr6(rdr6),
+                
+                .cr7(cr7),
+                .ttr7(ttr7),
+                .sr7(sr7),
+                .tdr7(tdr7),
+                .rdr7(rdr7),
+                
+                .cr8(cr8),
+                .ttr8(ttr8),
+                .sr8(sr8),
+                .tdr8(tdr8),
+                .rdr8(rdr8),
+                
+                .cr9(cr9),
+                .ttr9(ttr9),
+                .sr9(sr9),
+                .tdr9(tdr9),
+                .rdr9(rdr9),
+                
+                .cr10(cr10),
+                .ttr10(ttr10),
+                .sr10(sr10),
+                .tdr10(tdr10),
+                .rdr10(rdr10),
+                
+                .cr11(cr11),
+                .ttr11(ttr11),
+                .sr11(sr11),
+                .tdr11(tdr11),
+                .rdr11(rdr11),
+                
+                .tx6_write(tx6_write),
+                .rx6_read(rx6_read),
+                .sr6_read(sr6_read),
+                
+                .tx7_write(tx7_write),
+                .rx7_read(rx7_read),
+                .sr7_read(sr7_read),
+                
+               
+            
+                .tx8_write(tx8_write),
+                .rx8_read(rx8_read),
+                .sr8_read(sr8_read),
+                
+                .tx9_write(tx9_write),
+                .rx9_read(rx9_read),
+                .sr9_read(sr9_read),
+                
+                .tx10_write(tx10_write),
+                .rx10_read(rx10_read),
+                .sr10_read(sr10_read),
+                     
+                     .tx11_write(tx11_write),
+                .rx11_read(rx11_read),
+                .sr11_read(sr11_read),
+                
                  ///FPGA IO/////
                 .fpga_o0(fpga_o0),
                 .fpga_o1(fpga_o1),
@@ -360,8 +506,8 @@ regs regs(
                 .cpu_wr_ram_data(cpu_wr_ram_data),// 
                 .cpu_rd_ram_data(cpu_rd_ram_data),
                 .nfcr(nfcr),            //nand flash controller register
-                .nf_addr0(nf_addr0),
-                .nf_addr1(nf_addr1)
+                .nfaddr0(nf_addr0),
+                .nfaddr1(nf_addr1)
                 );
 
 
@@ -481,6 +627,95 @@ uart uartF(
             .stx_pad_o(stxF_pad_o),// uart out
             .int_pad_o(intF_o)
             );
+            
+uart uartG(
+            .clk(clk),
+            .cr(cr6),
+            .ttr(ttr6),
+            .sr(sr6),
+            .tdr(tdr6),
+            .rdr(rdr6),
+            .tx_write(tx6_write),
+            .rx_read(rx6_read),
+            .sr_read(sr6_read),
+            .srx_pad_i(srxG_pad_i), // uart in
+            .stx_pad_o(stxG_pad_o),// uart out
+            .int_pad_o(intG_o)
+            );
+uart uartH(
+            .clk(clk),
+            .cr(cr7),
+            .ttr(ttr7),
+            .sr(sr7),
+            .tdr(tdr7),
+            .rdr(rdr7),
+            .tx_write(tx7_write),
+            .rx_read(rx7_read),
+            .sr_read(sr7_read),
+            .srx_pad_i(srxH_pad_i), // uart in
+            .stx_pad_o(stxH_pad_o),// uart out
+            .int_pad_o(intH_o)
+            );
+            
+uart uartI(
+            .clk(clk),
+            .cr(cr8),
+            .ttr(ttr8),
+            .sr(sr8),
+            .tdr(tdr8),
+            .rdr(rdr8),
+            .tx_write(tx8_write),
+            .rx_read(rx8_read),
+            .sr_read(sr8_read),
+            .srx_pad_i(srxI_pad_i), // uart in
+            .stx_pad_o(stxI_pad_o),// uart out
+            .int_pad_o(intI_o)
+            );
+            
+uart uartJ(
+            .clk(clk),
+            .cr(cr9),
+            .ttr(ttr9),
+            .sr(sr9),
+            .tdr(tdr9),
+            .rdr(rdr9),
+            .tx_write(tx9_write),
+            .rx_read(rx9_read),
+            .sr_read(sr9_read),
+            .srx_pad_i(srxJ_pad_i), // uart in
+            .stx_pad_o(stxJ_pad_o),// uart out
+            .int_pad_o(intJ_o)
+            );
+            
+/*uart uartK(
+            .clk(clk),
+            .cr(cr10),
+            .ttr(ttr10),
+            .sr(sr10),
+            .tdr(tdr10),
+            .rdr(rdr10),
+            .tx_write(tx10_write),
+            .rx_read(rx10_read),
+            .sr_read(sr10_read),
+            .srx_pad_i(srxK_pad_i), // uart in
+            .stx_pad_o(stxK_pad_o),// uart out
+            .int_pad_o(intK_o)
+            );
+            
+uart uartL(
+            .clk(clk),
+            .cr(cr11),
+            .ttr(ttr11),
+            .sr(sr11),
+            .tdr(tdr11),
+            .rdr(rdr11),
+            .tx_write(tx11_write),
+            .rx_read(rx11_read),
+            .sr_read(sr11_read),
+            .srx_pad_i(srxL_pad_i), // uart in
+            .stx_pad_o(stxL_pad_o),// uart out
+            .int_pad_o(intL_o)
+            );*/
             
 fpga_io fpga_io(
                .clk(clk),

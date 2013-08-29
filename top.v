@@ -686,8 +686,8 @@ uart uartJ(
             .stx_pad_o(stxJ_pad_o),// uart out
             .int_pad_o(intJ_o)
             );
-            
-/*uart uartK(
+ /*           
+uart uartK(
             .clk(clk),
             .cr(cr10),
             .ttr(ttr10),

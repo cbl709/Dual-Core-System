@@ -3,100 +3,100 @@
 `include "uart_defines.v"
 
 ///注意地址是忽略A30,A31的
-`define CR0  16'h0000  // configuration register
-`define TTR0 16'h0001
-`define SR0  16'h0002  // status register
-`define TDR0 16'h0003
-`define RDR0 16'h0004
+`define CR0  22'h0000  // configuration register
+`define TTR0 22'h0001
+`define SR0  22'h0002  // status register
+`define TDR0 22'h0003
+`define RDR0 22'h0004
 
-`define CR1  16'h0005  // configuration register
-`define TTR1 16'h0006
-`define SR1  16'h0007  // status register
-`define TDR1 16'h0008
-`define RDR1 16'h0009
+`define CR1  22'h0005  // configuration register
+`define TTR1 22'h0006
+`define SR1  22'h0007  // status register
+`define TDR1 22'h0008
+`define RDR1 22'h0009
 
-`define CR2  16'h000A  // configuration register
-`define TTR2 16'h000B
-`define SR2  16'h000C  // status register
-`define TDR2 16'h000D
-`define RDR2 16'h000E
+`define CR2  22'h000A  // configuration register
+`define TTR2 22'h000B
+`define SR2  22'h000C  // status register
+`define TDR2 22'h000D
+`define RDR2 22'h000E
 
-`define CR3  16'h000F  // configuration register
-`define TTR3 16'h0010
-`define SR3  16'h0011  // status register
-`define TDR3 16'h0012
-`define RDR3 16'h0013
+`define CR3  22'h000F  // configuration register
+`define TTR3 22'h0010
+`define SR3  22'h0011  // status register
+`define TDR3 22'h0012
+`define RDR3 22'h0013
 
-`define CR4  16'h0014  // configuration register
-`define TTR4 16'h0015
-`define SR4  16'h0016  // status register
-`define TDR4 16'h0017
-`define RDR4 16'h0018
+`define CR4  22'h0014  // configuration register
+`define TTR4 22'h0015
+`define SR4  22'h0016  // status register
+`define TDR4 22'h0017
+`define RDR4 22'h0018
 
-`define CR5  16'h0019  // configuration register
-`define TTR5 16'h001A
-`define SR5  16'h001B  // status register
-`define TDR5 16'h001C
-`define RDR5 16'h001D
+`define CR5  22'h0019  // configuration register
+`define TTR5 22'h001A
+`define SR5  22'h001B  // status register
+`define TDR5 22'h001C
+`define RDR5 22'h001D
 
-`define CR6  16'h001F  // configuration register
-`define TTR6 16'h0020
-`define SR6  16'h0021  // status register
-`define TDR6 16'h0022
-`define RDR6 16'h0023
+`define CR6  22'h001F  // configuration register
+`define TTR6 22'h0020
+`define SR6  22'h0021  // status register
+`define TDR6 22'h0022
+`define RDR6 22'h0023
 
-`define CR7  16'h0024  // configuration register
-`define TTR7 16'h0025
-`define SR7  16'h0026  // status register
-`define TDR7 16'h0027
-`define RDR7 16'h0028
+`define CR7  22'h0024  // configuration register
+`define TTR7 22'h0025
+`define SR7  22'h0026  // status register
+`define TDR7 22'h0027
+`define RDR7 22'h0028
 
-`define CR8  16'h0029  // configuration register
-`define TTR8 16'h002A
-`define SR8  16'h002B  // status register
-`define TDR8 16'h002C
-`define RDR8 16'h002D
+`define CR8  22'h0029  // configuration register
+`define TTR8 22'h002A
+`define SR8  22'h002B  // status register
+`define TDR8 22'h002C
+`define RDR8 22'h002D
 
-`define CR9  16'h002F  // configuration register
-`define TTR9 16'h0030
-`define SR9  16'h0031  // status register
-`define TDR9 16'h0032
-`define RDR9 16'h0033
+`define CR9  22'h002F  // configuration register
+`define TTR9 22'h0030
+`define SR9  22'h0031  // status register
+`define TDR9 22'h0032
+`define RDR9 22'h0033
 
-`define CR10  16'h0034  // configuration register
-`define TTR10 16'h0035
-`define SR10  16'h0036  // status register
-`define TDR10 16'h0037
-`define RDR10 16'h0038
+`define CR10  22'h0034  // configuration register
+`define TTR10 22'h0035
+`define SR10  22'h0036  // status register
+`define TDR10 22'h0037
+`define RDR10 22'h0038
 
-`define CR11  16'h0039  // configuration register
-`define TTR11 16'h003A
-`define SR11  16'h003B  // status register
-`define TDR11 16'h003C
-`define RDR11 16'h003D
+`define CR11  22'h0039  // configuration register
+`define TTR11 22'h003A
+`define SR11  22'h003B  // status register
+`define TDR11 22'h003C
+`define RDR11 22'h003D
 
 /////////FPGA IO////////////////
-`define FPGA_O0   16'h0100
-`define FPGA_O1   16'h0101
-`define FPGA_O2   16'h0102
+`define FPGA_O0   22'h0100
+`define FPGA_O1   22'h0101
+`define FPGA_O2   22'h0102
 
-`define FPGA_I0   16'h0103
-`define FPGA_I1   16'h0104
-`define FPGA_I2   16'h0105
+`define FPGA_I0   22'h0103
+`define FPGA_I1   22'h0104
+`define FPGA_I2   22'h0105
 
 ////////FPGA CAN////////////////
-`define CAN0_BEGIN 16'h0200
-`define CAN0_END   16'h021f
+`define CAN0_BEGIN 22'h0200
+`define CAN0_END   22'h021f
 
 //////////nand flash controller registers///////
-`define PAGE_BEGIN  16'h1000  //4KB的ram地址
-`define PAGE_END    16'h13ff  
+`define PAGE_BEGIN  22'h1000  //4KB的ram地址
+`define PAGE_END    22'h13ff  
 
-`define NFADDR0     16'h0300    
-`define NFADDR1     16'h0301    
-`define NFCR        16'h0302    
-`define ID          16'h0303    
-`define STATUS      16'h0304   
+`define NFADDR0     22'h0300    
+`define NFADDR1     22'h0301    
+`define NFCR        22'h0302    
+`define ID          22'h0303    
+`define STATUS      22'h0304   
 
 
 
@@ -537,7 +537,7 @@ reg [31:0]                           nfaddr1 =32'h00000000;
 always@( posedge clk)
 begin
    if(we) begin
-   case(addr[15:0])
+   case(addr)
    /////UART/////////////////
    `CR0 : cr0   <= write_data[31:0];
    `CR1 : cr1   <= write_data[31:0];
@@ -659,7 +659,7 @@ end
 
 ///////////read registers/////////////////
 reg [31:0] read_data=32'h00000000;
-always@(posedge clk)
+always@(re or addr)
 begin
   if(re) begin
   case(addr)

@@ -686,7 +686,7 @@ uart uartJ(
             .stx_pad_o(stxJ_pad_o),// uart out
             .int_pad_o(intJ_o)
             );
- /*           
+          
 uart uartK(
             .clk(clk),
             .cr(cr10),
@@ -702,7 +702,7 @@ uart uartK(
             .int_pad_o(intK_o)
             );
             
-uart uartL(
+/*uart uartL(
             .clk(clk),
             .cr(cr11),
             .ttr(ttr11),
@@ -740,7 +740,7 @@ fpga_io fpga_io(
               );
                   
                   
-ppc_can_top can0(
+/*ppc_can_top can0(
                    .clk(clk),
                    .addr(addr[7:0]),
                    .can_wr_en(can0_wr_en),
@@ -752,7 +752,7 @@ ppc_can_top can0(
                    .can_tx(can0_tx),
                    .can_irq(can0_irq)
                    
-                  );
+                  );*/
 
 
      

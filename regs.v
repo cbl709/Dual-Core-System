@@ -1,6 +1,6 @@
 //`timescale 1ns / 1ps
 
-`include "uart_defines.v"
+`include "./uart/uart_defines.v"
 
 ///注意地址是忽略A30,A31的
 `define CR0  22'h0000  // configuration register
@@ -482,31 +482,31 @@ assign sr11_read  = re&&( addr == `SR11);
 assign rx11_read  = re&&( addr == `RDR11);
 
 /////////////////UART registers//////////////////////    
-reg [31:0]                              cr0= 32'h000c000;   // configuration register
-reg [31:0]                              cr1= 32'h000c000;
-reg [31:0]                              cr2= 32'h000c000;   // configuration register
-reg [31:0]                              cr3= 32'h000c000;
-reg [31:0]                              cr4= 32'h000c000;   // configuration register
-reg [31:0]                              cr5= 32'h000c000;
-reg [31:0]                              cr6= 32'h000c000;   // configuration register
-reg [31:0]                              cr7= 32'h000c000;
-reg [31:0]                              cr8= 32'h000c000;   // configuration register
-reg [31:0]                              cr9= 32'h000c000;
-reg [31:0]                              cr10=32'h000c000;   // configuration register
-reg [31:0]                              cr11=32'h000c000;
+reg [31:0]                              cr0= 32'h00000300;   // configuration register
+reg [31:0]                              cr1= 32'h00000300;
+reg [31:0]                              cr2= 32'h00000300;   // configuration register
+reg [31:0]                              cr3= 32'h00000300;
+reg [31:0]                              cr4= 32'h00000300;   // configuration register
+reg [31:0]                              cr5= 32'h00000300;
+reg [31:0]                              cr6= 32'h00000300;   // configuration register
+reg [31:0]                              cr7= 32'h00000300;
+reg [31:0]                              cr8= 32'h00000300;   // configuration register
+reg [31:0]                              cr9= 32'h00000300;
+reg [31:0]                              cr10=32'h00000300;   // configuration register
+reg [31:0]                              cr11=32'h00000300;
 
-reg [31:0]                             ttr0= 32'h0000104;   //默认4个字节时间timeout，trigger level默认为1
-reg [31:0]                             ttr1= 32'h0000104;
-reg [31:0]                             ttr2= 32'h0000104;
-reg [31:0]                             ttr3= 32'h0000104;
-reg [31:0]                             ttr4= 32'h0000104;
-reg [31:0]                             ttr5= 32'h0000104;
-reg [31:0]                             ttr6= 32'h0000104;   //默认4个字节时间timeout，trigger level默认为1
-reg [31:0]                             ttr7= 32'h0000104;
-reg [31:0]                             ttr8= 32'h0000104;
-reg [31:0]                             ttr9= 32'h0000104;
-reg [31:0]                             ttr10=32'h0000104;
-reg [31:0]                             ttr11=32'h0000104;
+reg [31:0]                             ttr0= 32'h00000104;   //默认4个字节时间timeout，trigger level默认为1
+reg [31:0]                             ttr1= 32'h00000104;
+reg [31:0]                             ttr2= 32'h00000104;
+reg [31:0]                             ttr3= 32'h00000104;
+reg [31:0]                             ttr4= 32'h00000104;
+reg [31:0]                             ttr5= 32'h00000104;
+reg [31:0]                             ttr6= 32'h00000104;   //默认4个字节时间timeout，trigger level默认为1
+reg [31:0]                             ttr7= 32'h00000104;
+reg [31:0]                             ttr8= 32'h00000104;
+reg [31:0]                             ttr9= 32'h00000104;
+reg [31:0]                             ttr10=32'h00000104;
+reg [31:0]                             ttr11=32'h00000104;
 
 reg [31:0]                              tdr0 =32'h00000000;
 reg [31:0]                              tdr1 =32'h00000000;

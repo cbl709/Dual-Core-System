@@ -128,10 +128,29 @@ NET output_pad0<0> LOC= D1;#LED1
 NET output_pad0<1> LOC= D2;#LED2
 NET output_pad0<2> LOC= E1;#LED3
 
+NET output_pad1<0> LOC= M1;#FPGA IO0
+NET output_pad1<1> LOC= M2;#FPGA IO1
+NET output_pad1<2> LOC= L2;#FPGA IO2
+NET output_pad1<3> LOC= K1;#FPGA IO3
+NET output_pad1<4> LOC= K2;#FPGA IO4
+NET output_pad1<5> LOC= J1;#FPGA IO5
+NET output_pad1<6> LOC= J2;#FPGA IO6
+NET output_pad1<7> LOC= H1;#FPGA IO7
+
+NET input_pad0<0> LOC= H2;#FPGA IO8
+NET input_pad0<1> LOC= G1;#FPGA IO9
+NET input_pad0<2> LOC= G2;#FPGA IO10
+NET input_pad0<3> LOC= F1;#FPGA IO11
+NET input_pad0<4> LOC= F2;#FPGA IO12
+NET input_pad0<5> LOC= L3;#FPGA IO13
+NET input_pad0<6> LOC= L4;#FPGA IO14
+NET input_pad0<7> LOC= K3;#FPGA IO15
+
+
 ####FPGA CAN##############
-NET can0_rx   LOC = W8;
-NET can0_tx   LOC = Y8;
-NET can0_irq  LOC = AA14;#EMIOS 21
+#NET can0_rx   LOC = W8;
+#NET can0_tx   LOC = Y8;
+#NET can0_irq  LOC = AA14;#EMIOS 21
 
 
 

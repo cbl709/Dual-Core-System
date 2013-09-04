@@ -31,29 +31,18 @@
 `define UART_II_FTEN    3'b100  // frame transmit interrupt
 
 // FIFO Control Register bits
-`define CR_RX_RESET     9    // rx_reset is the 9th bit of the CR
-`define CR_TX_RESET     10
-`define CR_FC_TL        15:14   // Trigger level
-
-`define UART_RX_RESET       0    // rx_reset is the 9th bit of the CR
-`define UART_TX_RESET       1
-`define UART_FC_TL      7:6 // Trigger level
-
-// FIFO trigger level values
-`define UART_FC_1       2'b00
-`define UART_FC_4       2'b01
-`define UART_FC_8       2'b10
-`define UART_FC_14      2'b11
+`define CR_RX_RESET     17    // rx_reset is the 9th bit of the CR
+`define CR_TX_RESET     18
 
 //---------------------------------------------
 // Line Control register bits
-`define CR_LC_BITS  17:16   // bits in character
-`define CR_LC_SB        18  // stop bits
-`define CR_LC_PE        19  // parity enable
-`define CR_LC_EP        20  // even parity
-`define CR_LC_SP        21  // stick parity
-`define CR_LC_BC        22  // Break control
-`define CR_LC_DL        23  // Divisor Latch access bit
+`define CR_LC_BITS   9:8   // bits in character
+`define CR_LC_SB        10  // stop bits
+`define CR_LC_PE        11  // parity enable
+`define CR_LC_EP        12  // even parity
+`define CR_LC_SP        13  // stick parity
+`define CR_LC_BC        14  // Break control
+`define CR_LC_DL        15  // Divisor Latch access bit
 
 // Line Control register bits
 `define UART_LC_BITS    1:0 // bits in character

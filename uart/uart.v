@@ -47,19 +47,28 @@ wire [`UART_FIFO_COUNTER_W-1:0]         trigger_level;
 assign                                  trigger_level= ttr[`UART_FIFO_COUNTER_W+7:8];
 
 
+//////////////// cr wire////
+wire [7:0]                              lcr;
+wire [3:0]                              fcr;
+wire [11:0]                             dl;
+assign                                  lcr=cr[15:8];
+assign                                  fcr=cr[19:16];
+assign                                  dl[11:0] =cr[31:20];
+
+
 /////// Frequency divider signals/////////////////////
 wire dlab;                  //divisor latch access bit
-reg enable      =1'b0;
-reg [7:0]   dlc =1'b0;
+reg enable       =1'b0;
+reg [15:0]   dlc =16'b0;
 wire        start_dlc;
-assign      dlab= cr[`CR_LC_DL];
-assign      start_dlc= dlab&(cr[31:24]!=0); // dlab==1 and dl!=0
+assign      dlab= lcr[7];
+assign      start_dlc= dlab&(dl!=0); // dlab==1 and dl!=0
 
 always @(posedge clk) 
 begin
       if(start_dlc) begin
         if (dlc==0)           
-            dlc <= #1 cr[31:24] - 1;               // reload counter
+            dlc <= #1 {4'b0,dl[11:0]} - 1;               // reload counter
         else
             dlc <= #1 dlc - 1;              // decrement counter
         end
@@ -125,7 +134,7 @@ assign tx_reset = cr[ `CR_TX_RESET ];
 uart_transmitter transmitter(
                             .clk(clk),
                             .dat_i(dat_i),
-                            .lcr(cr[23:16]),
+                            .lcr(lcr),
                             .lsr_mask(lsr_mask),
                             .tf_push(push_pulse),
                             .tx_reset(tx_reset),
@@ -169,7 +178,7 @@ assign serial_in=srx_pad;
 
 
 uart_receiver receiver(.clk(clk), 
-                       .lcr(cr[23:16]), 
+                       .lcr(lcr), 
                        .time_out_val(time_out_val),
                        .rf_pop(rf_pop_pulse),
                        .srx_pad_i(serial_in), 
@@ -326,7 +335,7 @@ always @(posedge clk )
 reg [7:0] block_value; // one character length minus stop bit
 reg [7:0] block_cnt=8'd0;
 always @(cr)
-  case (cr[19:16])
+  case (lcr[3:0])
     4'b0000                             : block_value = 111; // 7 bits
     4'b0100                             : block_value = 119; // 7.5 bits
     4'b0001, 4'b1000                    : block_value = 127; // 8 bits
@@ -522,7 +531,7 @@ end
 
 always@(cr)
 begin
-  if(cr[8])  //fcr[0] use to select the type of interrupt signal--electrical level or pulse module
+  if(fcr[0])  //fcr[0] use to select the type of interrupt signal--electrical level or pulse module
    int_pad_o=cnt;
   else
    int_pad_o=int_o;

@@ -70,7 +70,7 @@ NET oe_n     LOC=K20;  #OE
 NET rd_wr    LOC=B19;  #RD_WR
 
 NET clk       LOC=AB12; #CLKOUT
-#NET clk       LOC=A11;  #14.74MHZ
+NET uart_clk  LOC=A11;  #14.74MHZ
 #NET clk       LOC=B11;  #32MHZ
 
 

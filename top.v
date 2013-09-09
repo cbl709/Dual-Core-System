@@ -543,8 +543,8 @@ nand_flash_top  nand_flash_top(
                       );
                 
 uart uartA(
-            .clk(uart_clk),
-            //.clk(clk),
+           // .clk(uart_clk),
+            .clk(clk),
             .cr(cr0),
             .ttr(ttr0),
             .sr(sr0),
@@ -558,8 +558,8 @@ uart uartA(
             .int_pad_o(intA_o)
             );
 uart uartB(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr1),
             .ttr(ttr1),
             .sr(sr1),
@@ -574,8 +574,8 @@ uart uartB(
             );
             
 uart uartC(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr2),
             .ttr(ttr2),
             .sr(sr2),
@@ -590,8 +590,8 @@ uart uartC(
             );
             
 uart uartD(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr3),
             .ttr(ttr3),
             .sr(sr3),
@@ -606,8 +606,8 @@ uart uartD(
             );
             
 uart uartE(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr4),
             .ttr(ttr4),
             .sr(sr4),
@@ -622,8 +622,8 @@ uart uartE(
             );
             
 uart uartF(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr5),
             .ttr(ttr5),
             .sr(sr5),

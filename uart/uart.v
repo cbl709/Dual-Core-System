@@ -1,6 +1,5 @@
 `timescale 1ns / 1ps
 `include "uart_defines.v"
-///test
 
 module uart(
             clk,
@@ -166,7 +165,7 @@ wire srx_pad;
 wire rf_pop_pulse; // this signal is used to pop the data from receiver fifo
 wire serial_in;
 wire [31:0] counter_t;
-wire [`UART_FIFO_COUNTER_W-1:0]             rf_count;//5bits
+wire [`UART_FIFO_COUNTER_W-1:0]             rf_count;//
 wire [`UART_FIFO_REC_WIDTH-1:0]             rf_data_out; // 11 bits
 wire rf_error_bit;
 wire rf_overrun;
@@ -176,6 +175,24 @@ wire rf_push_pulse;
 
 assign rx_reset=cr[ `CR_RX_RESET ];
 assign serial_in=srx_pad;  
+
+//////////rf_pop_pulse logic //////
+reg pop_d1=1'b0;
+reg pop_d2=1'b0;
+wire rf_pop; 
+
+assign rf_pop=(rx_read&start_dlc); // CPU read the RDR 
+always@( posedge clk )
+begin
+      pop_d1<= rf_pop;
+      pop_d2<= pop_d1;
+  
+end
+assign rf_pop_pulse=~pop_d1&pop_d2;// detect the falling edge of tf_push
+
+
+    
+//----------------------------------------------------------------------------------------------
 
 
 uart_receiver receiver(.clk(clk), 
@@ -203,23 +220,7 @@ begin
     rdr={24'h0,rf_data_out[10:3]};
 end
 
-//////////rf_pop_pulse logic //////
-reg pop_d1=1'b0;
-reg pop_d2=1'b0;
-wire rf_pop; 
 
-assign rf_pop=(rx_read&start_dlc); // CPU read the RDR 
-always@( posedge clk )
-begin
-      pop_d1<= rf_pop;
-      pop_d2<= pop_d1;
-  
-end
-assign rf_pop_pulse=~pop_d1&pop_d2;// detect the falling edge of tf_push
-
-
-    
-//----------------------------------------------------------------------------------------------
 //  STATUS REGISTERS  //
 //
 

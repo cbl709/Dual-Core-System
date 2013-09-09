@@ -263,7 +263,7 @@ always @(lcr)
         4'b1111                                     : byte_time = 191; // 12 bits
     endcase // case(lcr[3:0])
 
-//设定timeout时间为time_out_val个字节时间长度
+
 always @(byte_time or time_out_val)
 begin
   toc_value <= time_out_val*byte_time;

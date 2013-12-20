@@ -66,8 +66,8 @@ end
 wire re_o;
 wire we_o;
 
-assign re_o = re;//re_d2;
-assign we_o = we;//we_d2;
+assign re_o = re&~addr[13];// Ë«ºËÏµÍ³°åFPGAµØÖ··¶Î§0x2000 0000~ 0x2000 7fff
+assign we_o = we&~addr[13];//
 
 assign addr[21:0]=ebi_addr[23:2];
       

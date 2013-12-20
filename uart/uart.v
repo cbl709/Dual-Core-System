@@ -31,14 +31,16 @@ module uart(
     reg int_o=1'b0;
     reg[31:0] rdr;
 
-///////////////////lsr iir wire and regs////
+//////////////////SR signal////////////////
+////////////////rf_count lsr iir ////
 
 wire [9:0]                              lsr;  //line status
 wire                                    lsr0, lsr1, lsr2, lsr3, lsr4, lsr5, lsr6, lsr7, lsr8, lsr9;
 reg                                     lsr0r=0, lsr1r=0, lsr2r=0, lsr3r=0, lsr4r=0, lsr5r=1, lsr6r=1, lsr7r=0, lsr8r=0, lsr9r=0;
 assign                                  lsr[9:0] = {lsr9r,lsr8r, lsr7r, lsr6r, lsr5r, lsr4r, lsr3r, lsr2r, lsr1r, lsr0r };
 reg  [7:0]                              iir= 8'hc1;
-assign sr={14'b00000000000000,lsr,iir};
+wire  [`UART_FIFO_COUNTER_W-1:0]  rf_count;
+assign sr={rf_count,lsr,iir};
 
 //////////////////ttr wire///////
 wire [7:0]                              time_out_val;
@@ -165,7 +167,6 @@ wire srx_pad;
 wire rf_pop_pulse; // this signal is used to pop the data from receiver fifo
 wire serial_in;
 wire [31:0] counter_t;
-wire [`UART_FIFO_COUNTER_W-1:0]             rf_count;//
 wire [`UART_FIFO_REC_WIDTH-1:0]             rf_data_out; // 11 bits
 wire rf_error_bit;
 wire rf_overrun;

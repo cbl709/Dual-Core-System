@@ -100,11 +100,15 @@ module top(
        nf_ce_n,
        nf_re_n,
        nf_we_n,
-         r
+         r,
+///////////led///////////////
+       led1,
+		 led2,
+		 led3
     );
      
      input       clk;
-      input      uart_clk;
+     input      uart_clk;
      input       cs_n;
      input       oe_n;
      input [3:0] we_n;
@@ -174,9 +178,11 @@ module top(
      input can0_rx;
      output can0_tx;
      output can0_irq;
-
-     
-
+/// LED//////////
+     output led1;
+	  output led2;
+	  output led3;
+ 
 
 /////////////UART wires/////////////////////////////////////////////////     
      wire [31:0] write_data;
@@ -323,7 +329,13 @@ module top(
      wire      [7:0]     nfcr;
      wire      [31:0]    id;
      wire      [7:0]     status;
-     
+	  
+	  
+//////////////LED logic///////////
+   assign {led3,led2,led1}= output_pad0[2:0];     
+
+
+
      
 ////cpu and fpga inout port     
 assign write_data    = ebi_data;
@@ -638,8 +650,8 @@ uart uartF(
             );
             
 uart uartG(
-            .clk(uart_clk),
-            //.clk(clk),
+           // .clk(uart_clk),
+            .clk(clk),
             .cr(cr6),
             .ttr(ttr6),
             .sr(sr6),
@@ -653,8 +665,8 @@ uart uartG(
             .int_pad_o(intG_o)
             );
 uart uartH(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr7),
             .ttr(ttr7),
             .sr(sr7),
@@ -669,8 +681,8 @@ uart uartH(
             );
             
 uart uartI(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr8),
             .ttr(ttr8),
             .sr(sr8),
@@ -685,8 +697,8 @@ uart uartI(
             );
             
 uart uartJ(
-            .clk(uart_clk),
-            //.clk(clk),
+           // .clk(uart_clk),
+            .clk(clk),
             .cr(cr9),
             .ttr(ttr9),
             .sr(sr9),
@@ -701,8 +713,8 @@ uart uartJ(
             );
           
 uart uartK(
-            .clk(uart_clk),
-            //.clk(clk),
+            //.clk(uart_clk),
+            .clk(clk),
             .cr(cr10),
             .ttr(ttr10),
             .sr(sr10),

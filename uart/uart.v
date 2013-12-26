@@ -235,8 +235,8 @@ assign lsr2 = rf_data_out[1]; // parity error bit
 assign lsr3 = rf_data_out[0]; // framing error bit
 assign lsr4 = rf_data_out[2]; // break error in the character
 assign lsr5 = (tf_count==`UART_FIFO_COUNTER_W'b0 && thre_set_en&& (tstate == /*`S_IDLE */ 0)); // transmitter empty
-assign lsr6 = (tf_count==`UART_FIFO_COUNTER_W'b0 && frame_idle_en && (tstate == /*`S_IDLE */ 0)); // 数据帧发送标志
-assign lsr7 = rf_error_bit  ;
+assign lsr6 = (tf_count==`UART_FIFO_COUNTER_W'b0 && frame_idle_en && (tstate == /*`S_IDLE */ 0)); //
+assign lsr7 = rf_error_bit;
 assign lsr8 = tf_overrun;
 assign lsr9 = read_empty;
 

@@ -492,7 +492,7 @@ regs regs(
                 .rx10_read(rx10_read),
                 .sr10_read(sr10_read),
                      
-                     .tx11_write(tx11_write),
+                .tx11_write(tx11_write),
                 .rx11_read(rx11_read),
                 .sr11_read(sr11_read),
                 

@@ -153,7 +153,7 @@ NET input_pad0<18> LOC= K2;#FPGA IO4
 NET input_pad0<19> LOC= L2;#FPGA IO2
 
 
-NET output_pad0<0> LOC= H4;FPGA IO20
+NET output_pad0<0> LOC= H4;#FPGA IO20
 NET output_pad0<1> LOC= J6;#FPGA IO21
 NET output_pad0<2> LOC= H5;#FPGA IO22
 NET output_pad0<3> LOC= G3;#FPGA IO23
@@ -162,8 +162,8 @@ NET output_pad0<5> LOC= F3;#FPGA IO25
 NET output_pad0<6> LOC= F4;#FPGA IO26
 NET output_pad0<7> LOC= M4;#FPGA IO27
 
-NET output_pad0<8 > LOC= M3;#FPGA IO28
-NET output_pad0<9 > LOC= N3;#FPGA IO29
+NET output_pad0<8> LOC= M3;#FPGA IO28
+NET output_pad0<9> LOC= N3;#FPGA IO29
 NET output_pad0<10> LOC= N4;#FPGA IO30
 NET output_pad0<11> LOC= P3;#FPGA IO31
 NET output_pad0<12> LOC= P4;#FPGA IO32
